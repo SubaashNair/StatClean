@@ -4,18 +4,20 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="statclean",
-    version="0.1.0",
+    version="0.1.2",
     author="Subashanan Nair",
     author_email="subaashnair12@gmail.com",
     description="A comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/SubaashNair/StatClean",
-    project_urls={  # <--- ADD THIS SECTION!
-        "Homepage": "https://github.com/SubaashNair/StatClean",
+    project_urls={
+        "Homepage": "https://subaashnair.github.io/StatClean/",
+        "Documentation": "https://subaashnair.github.io/StatClean/",
         "Source": "https://github.com/SubaashNair/StatClean",
         "Tracker": "https://github.com/SubaashNair/StatClean/issues",
-        "Documentation": "https://github.com/SubaashNair/StatClean#readme",
+        "API Reference": "https://subaashnair.github.io/StatClean/api-reference",
+        "Examples": "https://subaashnair.github.io/StatClean/examples",
     },
     packages=find_packages(),
     classifiers=[
