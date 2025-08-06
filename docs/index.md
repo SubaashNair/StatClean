@@ -1,6 +1,6 @@
-# StatClean Documentation
+# Welcome to StatClean
 
-Welcome to StatClean - A comprehensive statistical data preprocessing and outlier detection library.
+A comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting.
 
 ## Quick Start
 
