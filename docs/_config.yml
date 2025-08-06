@@ -1,0 +1,27 @@
+title: StatClean Documentation
+description: Comprehensive statistical data preprocessing and outlier detection library
+theme: minima
+url: "https://subaashnair.github.io"
+baseurl: "/StatClean"
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+markdown: kramdown
+highlighter: rouge
+
+navigation:
+  - title: Home
+    url: /
+  - title: API Reference
+    url: /api-reference
+  - title: Statistical Methods
+    url: /statistical-methods
+  - title: Examples
+    url: /examples
+  - title: Installation
+    url: /installation
+
+github:
+  repository_url: "https://github.com/SubaashNair/StatClean"
