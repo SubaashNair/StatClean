@@ -7,6 +7,48 @@
 StatClean is a comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting.
 As of v0.1.3, remover methods return the cleaner instance for chaining; access results via `cleaner.clean_df` and `cleaner.outlier_info`.
 
+[![PyPI](https://img.shields.io/pypi/v/statclean.svg)](https://pypi.org/project/statclean/)
+[![Build](https://github.com/SubaashNair/StatClean/actions/workflows/publish.yml/badge.svg)](https://github.com/SubaashNair/StatClean/actions)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://subaashnair.github.io/StatClean/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+> Note: Remover methods return `self`. Access cleaned data via `cleaner.clean_df` and details via `cleaner.outlier_info`.
+
+### Quick Links
+
+| Getting Started | Learn |
+|---|---|
+| [Installation](Installation-Guide) | [Statistical Methods](Statistical-Methods-Guide) |
+| [Quick Start](Quick-Start-Tutorial) | [API Reference](API-Reference) |
+| [Examples](Advanced-Examples) | [Performance Tips](Performance-Tips) |
+| [Troubleshooting](Troubleshooting) | [Contributing](Contributing) |
+
+### Feature Overview
+
+| Feature | Univariate | Multivariate | Formal Test |
+|---|---:|---:|---:|
+| IQR | ✅ |  |  |
+| Z-score | ✅ |  |  |
+| Modified Z-score | ✅ |  |  |
+| Mahalanobis |  | ✅ |  |
+| Grubbs | ✅ |  | ✅ |
+| Dixon Q | ✅ |  | ✅ |
+
+### How It Flows
+
+```mermaid
+flowchart LR
+  A[DataFrame] --> B[Analyze Distribution]
+  B --> C{Recommend Method}
+  C --> D[IQR / Z / Modified Z]
+  C --> E[Mahalanobis]
+  D --> F[Remove / Winsorize]
+  E --> F
+  F --> G[Report & Plots]
+```
+
+[Back to top](#welcome-to-statclean)
+
 ## Quick Navigation
 
 - [Installation Guide](Installation-Guide)
@@ -124,7 +166,8 @@ result = (cleaner
 
 # Performance Tips
 
-## Large Datasets
+<details>
+<summary><strong>Large Datasets</strong></summary>
 
 For datasets with >100k rows:
 
@@ -136,7 +179,10 @@ cleaner.clean_columns(columns, show_progress=True)
 cleaner.add_zscore_columns(columns, cache_stats=True)
 ```
 
-## Memory Optimization
+</details>
+
+<details>
+<summary><strong>Memory Optimization</strong></summary>
 
 ```python
 # Process columns individually for memory efficiency
@@ -147,13 +193,20 @@ for col in large_columns:
 cleaner = StatClean(df, preserve_index=False)
 ```
 
-## Multivariate Performance
+</details>
+
+<details>
+<summary><strong>Multivariate Performance</strong></summary>
 
 ```python
 # For many variables, consider dimensionality reduction first
 from sklearn.decomposition import PCA
 pca_data = PCA(n_components=5).fit_transform(df)
 ```
+
+</details>
+
+[Back to top](#performance-tips)
 
 ---
 
@@ -183,11 +236,19 @@ export MPLBACKEND=Agg
 ```
 
 ### Mahalanobis Threshold and Stability
+<details>
+<summary><strong>Details</strong></summary>
+
 `chi2_threshold` can be percentile (0<val<=1) or absolute chi-square statistic. Covariance inversion uses pseudoinverse when needed; optional shrinkage via scikit-learn's Ledoit–Wolf with `use_shrinkage=True`.
+
 ```python
 # Remove highly correlated variables first if instability persists
 correlation_matrix = df.corr()
 ```
+
+</details>
+
+[Back to top](#troubleshooting)
 
 ## Getting Help
 
@@ -278,6 +339,10 @@ Instructions for setting up GitHub Wiki:
 
 Best practices: drop NaNs before tests where needed; sample large data for Shapiro.
 
+> Warning: Dixon’s Q-test is recommended only for small sample sizes (n < 30).
+
+[Back to top](#statistical-methods-guide)
+
 ---
 
 ## API Reference (API-Reference.md)
@@ -327,6 +392,8 @@ Notes:
 - Remover methods return `self` for chaining; access data via `cleaner.clean_df`.
 - Mahalanobis supports percentile thresholds and shrinkage covariance.
 
+[Back to top](#api-reference)
+
 ---
 
 ## Advanced Examples (Advanced-Examples.md)
@@ -363,3 +430,5 @@ outliers = cleaner.detect_outliers_modified_zscore('PRICE')
 cleaner.remove_outliers_modified_zscore('PRICE')
 cleaner.visualize_outliers('PRICE')
 ```
+
+[Back to top](#advanced-examples)
