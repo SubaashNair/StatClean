@@ -2,6 +2,7 @@
 
 ## Home Page (Home.md)
 
+# Welcome to StatClean
 
 StatClean is a comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting.
 As of v0.1.3, remover methods return the cleaner instance for chaining; access results via `cleaner.clean_df` and `cleaner.outlier_info`.
@@ -249,3 +250,116 @@ Instructions for setting up GitHub Wiki:
 4. Copy the content above for each page
 5. Create pages with the exact names shown in parentheses
 6. Set "Home" as the main wiki page
+
+---
+
+## Statistical Methods Guide (Statistical-Methods-Guide.md)
+
+# Statistical Methods Guide
+
+## Univariate Methods
+- IQR: robust to non-normal data; configure lower/upper factors.
+- Z-score: assumes approximate normality; configurable threshold.
+- Modified Z-score: robust via MAD; default threshold 3.5.
+
+## Multivariate Methods
+- Mahalanobis distance: detects multivariate outliers using covariance structure.
+  - `chi2_threshold`: percentile in (0,1] or absolute chi-square statistic.
+  - `use_shrinkage=True` to enable Ledoit–Wolf covariance if scikit-learn available.
+
+## Formal Tests
+- Grubbs' test: single outlier detection with p-value and critical value.
+- Dixon's Q-test: for small n (<30); approximate p-value reported.
+
+## Transformations
+- Box-Cox (positive data): optimal lambda estimated; preserves NaNs.
+- Log (natural, base 10, base 2): shifts applied for non-positive values.
+- Square-root: shifts applied for negatives.
+
+Best practices: drop NaNs before tests where needed; sample large data for Shapiro.
+
+---
+
+## API Reference (API-Reference.md)
+
+# API Reference
+
+## Core Class
+- `StatClean(df: DataFrame, preserve_index: bool = True)`
+  - `set_data`, `set_thresholds`, `get_thresholds`, `reset`, `get_summary_report`
+
+## Detection (non-destructive)
+- `detect_outliers_iqr(column, lower_factor=None, upper_factor=None)` → Series
+- `detect_outliers_zscore(column, threshold=None)` → Series
+- `detect_outliers_modified_zscore(column, threshold=None)` → Series
+- `detect_outliers_mahalanobis(columns=None, chi2_threshold=None, use_shrinkage=False)` → Series
+
+## Removal / Winsorizing (chained)
+- `remove_outliers_iqr(column, ...)` → self
+- `remove_outliers_zscore(column, threshold=None)` → self
+- `remove_outliers_modified_zscore(column, threshold=None)` → self
+- `remove_outliers_mahalanobis(columns=None, chi2_threshold=None, use_shrinkage=False)` → self
+- `winsorize_outliers_iqr(column, ...)` → self
+- `winsorize_outliers_zscore(column, threshold=None)` → self
+- `winsorize_outliers_percentile(column, lower_percentile=5, upper_percentile=95)` → self
+
+## Analysis & Utilities
+- `analyze_distribution(column)` → dict (skewness, kurtosis, normality, recommendation)
+- `compare_methods(columns=None, methods=None, ...)` → dict summary
+- `get_outlier_stats(columns=None, methods=['iqr','zscore'], ...)` → DataFrame
+- `plot_outlier_analysis(columns=None, methods=None, figsize=(15,5))` → dict[str, Figure]
+- `visualize_outliers(column)` → None
+
+## Transformations
+- `transform_boxcox(column, lambda_param=None)` → (self, info)
+- `transform_log(column, base='natural')` → (self, info)
+- `transform_sqrt(column)` → (self, info)
+- `recommend_transformation(column)` → dict
+
+## Utils (module `statclean.utils`)
+- `plot_outliers(series, outliers_mask, title=None)`
+- `plot_distribution(series, outliers_mask=None, title=None)`
+- `plot_boxplot(series, title=None)`
+- `plot_qq(series, outliers_mask=None, title=None)`
+- `plot_outlier_analysis(data, outliers=None)`
+
+Notes:
+- Remover methods return `self` for chaining; access data via `cleaner.clean_df`.
+- Mahalanobis supports percentile thresholds and shrinkage covariance.
+
+---
+
+## Advanced Examples (Advanced-Examples.md)
+
+# Advanced Examples
+
+### California Housing End-to-End
+```python
+import pandas as pd
+from sklearn.datasets import fetch_california_housing
+from statclean import StatClean
+
+housing = fetch_california_housing()
+df = pd.DataFrame(housing.data, columns=housing.feature_names)
+df['PRICE'] = housing.target
+
+cleaner = StatClean(df, preserve_index=True)
+
+# Analyze & clean selected features
+features = ['MedInc', 'AveRooms', 'PRICE']
+cleaned_df, info = cleaner.clean_columns(features, method='auto', show_progress=True)
+
+# Multivariate check
+mv_outliers = cleaner.detect_outliers_mahalanobis(['MedInc', 'AveRooms', 'PRICE'], chi2_threshold=0.975)
+print('Multivariate outliers:', mv_outliers.sum())
+
+# Visualization grid
+figs = cleaner.plot_outlier_analysis(features)
+```
+
+### Modified Z-score Visualization
+```python
+outliers = cleaner.detect_outliers_modified_zscore('PRICE')
+cleaner.remove_outliers_modified_zscore('PRICE')
+cleaner.visualize_outliers('PRICE')
+```
