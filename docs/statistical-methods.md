@@ -1,3 +1,9 @@
+---
+title: Statistical Methods
+layout: default
+nav_order: 4
+---
+
 # Statistical Methods
 
 ## Overview

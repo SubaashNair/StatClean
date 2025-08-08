@@ -1,3 +1,9 @@
+---
+title: Examples
+layout: default
+nav_order: 3
+---
+
 # Examples
 
 ## Quick Start Example

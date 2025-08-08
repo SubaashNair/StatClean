@@ -1,3 +1,9 @@
+---
+title: API Reference
+layout: default
+nav_order: 5
+---
+
 # API Reference
 
 ## StatClean Class
