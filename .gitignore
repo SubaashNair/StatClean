@@ -38,4 +38,7 @@ build/
 
 # Misc
 .DS_Store
-.env 
+.env
+
+# Claude Logs
+claude_logs/
