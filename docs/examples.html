@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examples - StatClean</title>
+    <meta name="description" content="Comprehensive examples and tutorials for StatClean statistical data preprocessing library.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-chart-line me-2"></i>StatClean
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="installation.html">Installation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="examples.html">Examples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistical-methods.html">Methods</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="api-reference.html">API</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex">
+                    <a href="https://github.com/SubaashNair/StatClean" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-github me-1"></i>GitHub
+                    </a>
+                    <a href="https://pypi.org/project/statclean/" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i>Install
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 sidebar">
+                <nav class="nav flex-column scrollspy-nav">
+                    <a class="nav-link active" href="#quick-start">Quick Start</a>
+                    <a class="nav-link" href="#statistical-testing">Statistical Testing</a>
+                    <a class="nav-link" href="#multivariate">Multivariate Analysis</a>
+                    <a class="nav-link" href="#transformations">Transformations</a>
+                    <a class="nav-link" href="#method-chaining">Method Chaining</a>
+                    <a class="nav-link" href="#comprehensive">Comprehensive Analysis</a>
+                    <a class="nav-link" href="#visualization">Visualization</a>
+                    <a class="nav-link" href="#real-dataset">Real Dataset</a>
+                    <a class="nav-link" href="#advanced">Advanced Usage</a>
+                </nav>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9 content-area">
+                <h1><i class="fas fa-code me-3"></i>Examples</h1>
+                <p class="lead">Learn StatClean through practical examples and real-world use cases.</p>
+                
+                <!-- Quick Start Example -->
+                <section id="quick-start" class="mb-5">
+                    <h2><i class="fas fa-rocket me-2"></i>Quick Start Example</h2>
+                    <p>Get started with basic outlier detection and removal:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python">import pandas as pd
+from statclean import StatClean
+
+# Sample data with outliers
+df = pd.DataFrame({
+    'income': [25000, 30000, 35000, 40000, 500000, 45000, 50000],
+    'age': [25, 30, 35, 40, 35, 45, 50]
+})
+
+print("Original data:")
+print(df)
+
+# Initialize StatClean
+cleaner = StatClean(df)
+
+# Basic outlier removal using Z-score method
+cleaner.remove_outliers_zscore('income')
+cleaned_df = cleaner.clean_df
+
+print(f"\\nOriginal shape: {df.shape}")
+print(f"Cleaned shape: {cleaned_df.shape}")
+print("\\nCleaned data:")
+print(cleaned_df)</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Pro Tip:</strong> The income value of 500,000 is significantly higher than others and will be detected as an outlier.
+                    </div>
+                </section>
+                
+                <!-- Statistical Testing -->
+                <section id="statistical-testing" class="mb-5">
+                    <h2><i class="fas fa-flask me-2"></i>Statistical Testing Example</h2>
+                    <p>Use formal statistical tests to validate outlier detection:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python"># Formal statistical testing with p-values
+cleaner = StatClean(df)
+
+# Grubbs' test for outliers with statistical significance
+grubbs_result = cleaner.grubbs_test('income', alpha=0.05)
+print("Grubbs' Test Results:")
+print(f"  Test statistic: {grubbs_result['statistic']:.3f}")
+print(f"  P-value: {grubbs_result['p_value']:.6f}")
+print(f"  Outlier detected: {grubbs_result['is_outlier']}")
+print(f"  Outlier value: {grubbs_result['outlier_value']}")
+
+# Dixon's Q-test for small samples (recommended for n < 30)
+dixon_result = cleaner.dixon_q_test('age', alpha=0.05)
+print("\\nDixon's Q-Test Results:")
+print(f"  Q statistic: {dixon_result['statistic']:.3f}")
+print(f"  Critical value: {dixon_result['critical_value']:.3f}")
+print(f"  P-value: {dixon_result['p_value']:.6f}")
+print(f"  Outlier detected: {dixon_result['is_outlier']}")</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Multivariate Analysis -->
+                <section id="multivariate" class="mb-5">
+                    <h2><i class="fas fa-project-diagram me-2"></i>Multivariate Analysis Example</h2>
+                    <p>Detect outliers using relationships between multiple variables:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python"># Multivariate outlier detection using Mahalanobis distance
+cleaner = StatClean(df)
+
+# Detect outliers considering both income and age together
+outliers = cleaner.detect_outliers_mahalanobis(['income', 'age'], 
+                                              chi2_threshold=0.95)
+print(f"Multivariate outliers detected: {outliers.sum()}")
+print("Outlier indices:", outliers[outliers].index.tolist())
+
+# More conservative threshold (99th percentile)
+outliers_conservative = cleaner.detect_outliers_mahalanobis(
+    ['income', 'age'], 
+    chi2_threshold=0.99,
+    use_shrinkage=True  # Use shrinkage covariance for stability
+)
+print(f"Conservative outliers: {outliers_conservative.sum()}")
+
+# Remove multivariate outliers
+cleaner.remove_outliers_mahalanobis(['income', 'age'])
+cleaned_df = cleaner.clean_df
+print(f"Shape after multivariate cleaning: {cleaned_df.shape}")</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Data Transformations -->
+                <section id="transformations" class="mb-5">
+                    <h2><i class="fas fa-exchange-alt me-2"></i>Data Transformation Example</h2>
+                    <p>Apply statistical transformations to normalize skewed data:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python"># Automatic transformation recommendation
+cleaner = StatClean(df)
+
+recommendation = cleaner.recommend_transformation('income')
+print("Transformation Recommendation:")
+print(f"  Recommended method: {recommendation['recommended_method']}")
+print(f"  Current skewness: {recommendation['current_skewness']:.3f}")
+print(f"  Expected improvement: {recommendation['expected_improvement']:.3f}")
+
+# Apply Box-Cox transformation with automatic lambda estimation
+_, transform_info = cleaner.transform_boxcox('income')
+print(f"\\nBox-Cox transformation applied:")
+print(f"  Optimal lambda: {transform_info['lambda']:.3f}")
+print(f"  Skewness before: {transform_info['skewness_before']:.3f}")
+print(f"  Skewness after: {transform_info['skewness_after']:.3f}")
+
+# Alternative transformations
+cleaner_log = StatClean(df.copy())
+_, log_info = cleaner_log.transform_log('income', base='natural')
+print(f"\\nLog transformation skewness: {log_info['skewness_after']:.3f}")
+
+cleaner_sqrt = StatClean(df.copy()) 
+_, sqrt_info = cleaner_sqrt.transform_sqrt('income')
+print(f"Square root transformation skewness: {sqrt_info['skewness_after']:.3f}")</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Method Chaining -->
+                <section id="method-chaining" class="mb-5">
+                    <h2><i class="fas fa-link me-2"></i>Method Chaining Example</h2>
+                    <p>Use the fluent API to chain multiple operations:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python"># Method chaining for complex workflows
+cleaner = StatClean(df)
+
+# Chain multiple operations together
+result_df = (cleaner
+    .set_thresholds(zscore_threshold=2.5, iqr_lower_factor=2.0)
+    .add_zscore_columns(['income'])  # Add Z-score columns for analysis
+    .transform_boxcox('income')      # Apply transformation
+    .winsorize_outliers_iqr('income', lower_factor=1.5, upper_factor=1.5)
+    .remove_outliers_modified_zscore('age', threshold=3.0)
+    .clean_df)
+
+print("Method chaining result:")
+print(result_df)
+print(f"Final shape: {result_df.shape}")
+
+# Access outlier information
+print("\\nOutlier details:")
+print(cleaner.outlier_info)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Comprehensive Analysis -->
+                <section id="comprehensive" class="mb-5">
+                    <h2><i class="fas fa-chart-bar me-2"></i>Comprehensive Analysis Example</h2>
+                    <p>Analyze data distribution and compare detection methods:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python"># Distribution analysis with automatic recommendations
+cleaner = StatClean(df)
+
+analysis = cleaner.analyze_distribution('income')
+print("Distribution Analysis for 'income':")
+print(f"  Skewness: {analysis['skewness']:.3f}")
+print(f"  Kurtosis: {analysis['kurtosis']:.3f}")
+print(f"  Normality test p-value: {analysis['normality_test']['p_value']:.6f}")
+print(f"  Recommended method: {analysis['recommended_method']}")
+print(f"  Recommendation reason: {analysis['recommendation_reason']}")
+
+# Compare different detection methods
+comparison = cleaner.compare_methods(
+    ['income'], 
+    methods=['iqr', 'zscore', 'modified_zscore']
+)
+
+print("\\nMethod Comparison Results:")
+for method, stats in comparison['income']['method_stats'].items():
+    print(f"  {method.upper()}:")
+    print(f"    Outliers detected: {stats['outliers_detected']}")
+    print(f"    Outlier indices: {stats['outlier_indices']}")
+    
+print(f"\\nAgreement summary: {comparison['income']['summary']}")
+
+# Get detailed outlier statistics without removing data
+stats_df = cleaner.get_outlier_stats(['income', 'age'], include_indices=True)
+print("\\nDetailed outlier statistics:")
+print(stats_df)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Visualization -->
+                <section id="visualization" class="mb-5">
+                    <h2><i class="fas fa-chart-area me-2"></i>Visualization Example</h2>
+                    <p>Create comprehensive plots for outlier analysis:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python">import matplotlib.pyplot as plt
+from statclean.utils import plot_outliers, plot_distribution, plot_qq
+
+# Comprehensive analysis plots for multiple columns
+cleaner = StatClean(df)
+figures = cleaner.plot_outlier_analysis(['income', 'age'])
+
+# The figures dictionary contains matplotlib figure objects
+# You can save or display them as needed
+for column, fig in figures.items():
+    fig.savefig(f'{column}_analysis.png', dpi=300, bbox_inches='tight')
+
+# Individual visualization components
+outliers = cleaner.detect_outliers_zscore('income', threshold=3.0)
+
+# Create individual plots
+plt.figure(figsize=(15, 4))
+
+plt.subplot(1, 3, 1)
+plot_outliers(df['income'], outliers, title='Income Outlier Detection')
+
+plt.subplot(1, 3, 2) 
+plot_distribution(df['income'], outliers, title='Income Distribution')
+
+plt.subplot(1, 3, 3)
+plot_qq(df['income'], outliers, title='Income Q-Q Plot')
+
+plt.tight_layout()
+plt.show()
+
+# Visualize specific outliers
+print("Detected outliers:")
+outlier_data = df[outliers]
+print(outlier_data)</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Note:</strong> For headless servers, set <code>MPLBACKEND=Agg</code> before importing matplotlib.
+                    </div>
+                </section>
+                
+                <!-- Real Dataset Example -->
+                <section id="real-dataset" class="mb-5">
+                    <h2><i class="fas fa-database me-2"></i>Real Dataset Example</h2>
+                    <p>Complete workflow with the California Housing dataset:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python">from sklearn.datasets import fetch_california_housing
+import pandas as pd
+from statclean import StatClean
+
+# Load California Housing dataset
+housing = fetch_california_housing()
+df = pd.DataFrame(housing.data, columns=housing.feature_names)
+df['PRICE'] = housing.target
+
+print(f"Dataset shape: {df.shape}")
+print("Features:", list(df.columns))
+
+# Initialize with index preservation for tracking
+cleaner = StatClean(df, preserve_index=True)
+
+# Analyze key features for skewness and outliers
+features = ['MedInc', 'AveRooms', 'Population', 'PRICE']
+
+print("\\nDistribution analysis:")
+for feature in features:
+    analysis = cleaner.analyze_distribution(feature)
+    print(f"{feature}:")
+    print(f"  Skewness: {analysis['skewness']:.3f}")
+    print(f"  Recommended method: {analysis['recommended_method']}")
+    
+    # Apply formal testing for highly skewed features
+    if abs(analysis['skewness']) > 1:
+        grubbs_result = cleaner.grubbs_test(feature, alpha=0.01)
+        print(f"  Grubbs test p-value: {grubbs_result['p_value']:.6f}")
+
+# Comprehensive cleaning with progress tracking
+cleaned_df, cleaning_info = cleaner.clean_columns(
+    columns=features,
+    method='auto',  # Automatic method selection based on distribution
+    show_progress=True,
+    include_indices=True
+)
+
+print(f"\\nCleaning Results:")
+print(f"Original shape: {df.shape}")
+print(f"Cleaned shape: {cleaned_df.shape}")
+
+# Detailed results for each feature
+for feature, info in cleaning_info.items():
+    print(f"\\n{feature}:")
+    print(f"  Method used: {info['method_used']}")
+    print(f"  Outliers removed: {info['outliers_removed']}")
+    print(f"  Percentage removed: {info['percentage_removed']:.2f}%")
+    if 'p_value' in info:
+        print(f"  Statistical significance: p = {info['p_value']:.6f}")
+
+# Generate comprehensive visualizations for cleaned data
+figures = cleaner.plot_outlier_analysis(features)
+
+# Method comparison to validate cleaning decisions
+comparison = cleaner.compare_methods(features)
+print("\\nMethod agreement analysis:")
+for feature in features:
+    print(f"{feature}: {comparison[feature]['summary']}")
+
+# Generate final summary report
+summary_report = cleaner.get_summary_report()
+print("\\nSummary Report:")
+print(summary_report)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Advanced Usage -->
+                <section id="advanced" class="mb-5">
+                    <h2><i class="fas fa-cogs me-2"></i>Advanced Statistical Example</h2>
+                    <p>Advanced techniques for research and publication-quality analysis:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python"># Advanced statistical analysis with custom strategies
+import numpy as np
+
+# Create more complex dataset
+np.random.seed(42)
+df_advanced = pd.DataFrame({
+    'reaction_time': np.random.gamma(2, 0.15, 500),  # Skewed distribution
+    'accuracy': np.random.beta(8, 2, 500) * 100,     # Bounded data  
+    'confidence': np.random.normal(7, 1.5, 500),     # Normal-ish data
+    'trial_number': range(1, 501)
+})
+
+# Add some realistic outliers
+df_advanced.loc[50:52, 'reaction_time'] *= 5    # Participant distraction
+df_advanced.loc[100, 'accuracy'] = 30           # Data entry error
+df_advanced.loc[200:205, 'confidence'] = np.nan # Missing responses
+
+cleaner = StatClean(df_advanced.dropna(), preserve_index=True)
+
+# Custom cleaning strategy for different data types
+strategy = {
+    'reaction_time': {
+        'method': 'modified_zscore', 
+        'threshold': 3.0,
+        'reason': 'Skewed distribution, robust method needed'
+    },
+    'accuracy': {
+        'method': 'iqr', 
+        'lower_factor': 2.0, 
+        'upper_factor': 2.0,
+        'reason': 'Bounded data, IQR appropriate'
+    },
+    'confidence': {
+        'method': 'zscore', 
+        'threshold': 2.5,
+        'reason': 'Approximately normal distribution'
+    }
+}
+
+# Apply custom strategy
+print("Applying custom cleaning strategy:")
+for column, params in strategy.items():
+    method = params['method']
+    print(f"\\n{column}: Using {method} - {params['reason']}")
+    
+    if method == 'modified_zscore':
+        cleaner.remove_outliers_modified_zscore(
+            column, threshold=params['threshold']
+        )
+    elif method == 'iqr':
+        cleaner.remove_outliers_iqr(
+            column, 
+            lower_factor=params['lower_factor'],
+            upper_factor=params['upper_factor']
+        )
+    elif method == 'zscore':
+        cleaner.remove_outliers_zscore(
+            column, threshold=params['threshold']
+        )
+
+# Get cleaned data and comprehensive statistics
+cleaned_df = cleaner.clean_df
+print(f"\\nFinal shape: {cleaned_df.shape}")
+
+# Publication-quality statistical testing
+features = ['reaction_time', 'accuracy', 'confidence'] 
+print("\\nStatistical Test Results:")
+for feature in features:
+    # Multiple testing with Bonferroni correction
+    alpha_corrected = 0.05 / len(features)
+    
+    grubbs_result = cleaner.grubbs_test(feature, alpha=alpha_corrected)
+    dixon_result = cleaner.dixon_q_test(feature, alpha=alpha_corrected)
+    
+    print(f"\\n{feature}:")
+    print(f"  Grubbs: p = {grubbs_result['p_value']:.6f}, " +
+          f"significant = {grubbs_result['is_outlier']}")
+    print(f"  Dixon: p = {dixon_result['p_value']:.6f}, " +
+          f"significant = {dixon_result['is_outlier']}")
+
+# Generate comprehensive report for publication
+final_report = cleaner.get_summary_report()
+print("\\n" + "="*60)
+print("PUBLICATION SUMMARY REPORT")
+print("="*60)
+print(final_report)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Next Steps -->
+                <div class="alert alert-success">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>Ready for More?</h5>
+                    <p class="mb-3">Explore advanced topics and detailed documentation:</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <a href="statistical-methods.html" class="btn btn-primary btn-sm me-2 mb-2">
+                                <i class="fas fa-flask me-1"></i>Statistical Methods
+                            </a>
+                            <a href="api-reference.html" class="btn btn-outline-primary btn-sm mb-2">
+                                <i class="fas fa-book me-1"></i>API Reference
+                            </a>
+                        </div>
+                        <div class="col-lg-6">
+                            <a href="https://github.com/SubaashNair/StatClean/tree/main/examples" class="btn btn-outline-secondary btn-sm me-2 mb-2">
+                                <i class="fab fa-github me-1"></i>More Examples
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Scrollspy for sidebar navigation
+        const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+            target: '.scrollspy-nav',
+            offset: 100
+        });
+        
+        // Smooth scrolling
+        document.querySelectorAll('.scrollspy-nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

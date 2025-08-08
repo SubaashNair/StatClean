@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - StatClean</title>
+    <meta name="description" content="Complete API reference and documentation for StatClean statistical data preprocessing library.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-chart-line me-2"></i>StatClean
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="installation.html">Installation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="examples.html">Examples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistical-methods.html">Methods</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="api-reference.html">API</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex">
+                    <a href="https://github.com/SubaashNair/StatClean" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-github me-1"></i>GitHub
+                    </a>
+                    <a href="https://pypi.org/project/statclean/" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i>Install
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 sidebar">
+                <nav class="nav flex-column scrollspy-nav">
+                    <a class="nav-link active" href="#initialization">StatClean Class</a>
+                    <a class="nav-link" href="#detection">Detection Methods</a>
+                    <a class="nav-link" href="#treatment">Treatment Methods</a>
+                    <a class="nav-link" href="#statistical-testing">Statistical Testing</a>
+                    <a class="nav-link" href="#transformations">Transformations</a>
+                    <a class="nav-link" href="#analysis">Analysis Methods</a>
+                    <a class="nav-link" href="#visualization">Visualization</a>
+                    <a class="nav-link" href="#utilities">Utility Methods</a>
+                    <a class="nav-link" href="#utility-functions">Utility Functions</a>
+                </nav>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9 content-area">
+                <h1><i class="fas fa-book me-3"></i>API Reference</h1>
+                <p class="lead">Complete reference documentation for all StatClean classes, methods, and functions.</p>
+                
+                <!-- StatClean Class -->
+                <section id="initialization" class="mb-5">
+                    <h2>StatClean Class</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Initialization</h4>
+                        </div>
+                        <div class="card-body">
+                            <pre><code class="language-python">StatClean(df=None, preserve_index=True)</code></pre>
+                            
+                            <h5>Parameters:</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Default</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>df</code></td>
+                                            <td>pandas.DataFrame</td>
+                                            <td>None</td>
+                                            <td>The DataFrame to clean</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>preserve_index</code></td>
+                                            <td>bool</td>
+                                            <td>True</td>
+                                            <td>Whether to preserve original index</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <h5>Example:</h5>
+                            <pre><code class="language-python">import pandas as pd
+from statclean import StatClean
+
+df = pd.DataFrame({'values': [1, 2, 3, 100, 4, 5]})
+cleaner = StatClean(df, preserve_index=True)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Detection Methods -->
+                <section id="detection" class="mb-5">
+                    <h2><i class="fas fa-search me-2"></i>Detection Methods</h2>
+                    <p>Methods for detecting outliers without removing them from the dataset.</p>
+                    
+                    <!-- IQR Detection -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>detect_outliers_iqr(column, lower_factor=1.5, upper_factor=1.5)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Detect outliers using the Interquartile Range method.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to analyze</li>
+                                        <li><code>lower_factor</code> (float): Lower bound multiplier for IQR</li>
+                                        <li><code>upper_factor</code> (float): Upper bound multiplier for IQR</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>pandas.Series</code>: Boolean mask indicating outliers</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python"># Standard IQR
+outliers = cleaner.detect_outliers_iqr('values')
+
+# Conservative approach
+outliers = cleaner.detect_outliers_iqr(
+    'values', 
+    lower_factor=2.0, 
+    upper_factor=2.0
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Z-Score Detection -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>detect_outliers_zscore(column, threshold=3.0)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Detect outliers using Z-score method.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to analyze</li>
+                                        <li><code>threshold</code> (float): Z-score threshold for outlier detection</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>pandas.Series</code>: Boolean mask indicating outliers</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python"># Standard threshold
+outliers = cleaner.detect_outliers_zscore('values')
+
+# More sensitive
+outliers = cleaner.detect_outliers_zscore(
+    'values', 
+    threshold=2.5
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modified Z-Score Detection -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>detect_outliers_modified_zscore(column, threshold=3.5)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Detect outliers using Modified Z-score (MAD-based) method.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to analyze</li>
+                                        <li><code>threshold</code> (float): Modified Z-score threshold</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>pandas.Series</code>: Boolean mask indicating outliers</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python"># Standard MAD threshold
+outliers = cleaner.detect_outliers_modified_zscore('values')
+
+# More conservative
+outliers = cleaner.detect_outliers_modified_zscore(
+    'values', 
+    threshold=4.0
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mahalanobis Detection -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>detect_outliers_mahalanobis(columns, chi2_threshold=None, use_shrinkage=False)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Detect multivariate outliers using Mahalanobis distance.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>columns</code> (list): List of column names for multivariate analysis</li>
+                                        <li><code>chi2_threshold</code> (float): Chi-square threshold or percentile (0-1]</li>
+                                        <li><code>use_shrinkage</code> (bool): Use Ledoit–Wolf shrinkage covariance</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>pandas.Series</code>: Boolean mask indicating outliers</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python"># 97.5th percentile (default)
+outliers = cleaner.detect_outliers_mahalanobis(
+    ['var1', 'var2']
+)
+
+# 99th percentile with shrinkage
+outliers = cleaner.detect_outliers_mahalanobis(
+    ['var1', 'var2'], 
+    chi2_threshold=0.99,
+    use_shrinkage=True
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Treatment Methods -->
+                <section id="treatment" class="mb-5">
+                    <h2><i class="fas fa-tools me-2"></i>Treatment Methods</h2>
+                    <p>Methods for removing or treating detected outliers. All methods return <code>self</code> for method chaining.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Important:</strong> All treatment methods return <code>self</code> to enable method chaining. Access results via <code>cleaner.clean_df</code> and <code>cleaner.outlier_info</code>.
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Removal Methods</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><code>remove_outliers_iqr(column, ...)</code></li>
+                                        <li><code>remove_outliers_zscore(column, threshold=3.0)</code></li>
+                                        <li><code>remove_outliers_modified_zscore(column, threshold=3.5)</code></li>
+                                        <li><code>remove_outliers_mahalanobis(columns, ...)</code></li>
+                                    </ul>
+                                    
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">cleaner.remove_outliers_zscore('values')
+cleaned_df = cleaner.clean_df</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Winsorizing Methods</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><code>winsorize_outliers_iqr(column, ...)</code></li>
+                                        <li><code>winsorize_outliers_zscore(column, threshold=3.0)</code></li>
+                                        <li><code>winsorize_outliers_percentile(column, lower=5, upper=95)</code></li>
+                                    </ul>
+                                    
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">cleaner.winsorize_outliers_iqr('values')
+winsorized_df = cleaner.clean_df</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Statistical Testing -->
+                <section id="statistical-testing" class="mb-5">
+                    <h2><i class="fas fa-microscope me-2"></i>Statistical Testing</h2>
+                    <p>Formal statistical tests for outlier detection with p-values and significance testing.</p>
+                    
+                    <!-- Grubbs Test -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>grubbs_test(column, alpha=0.05, two_sided=True)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Perform Grubbs' test for outliers with statistical significance.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to test</li>
+                                        <li><code>alpha</code> (float): Significance level</li>
+                                        <li><code>two_sided</code> (bool): Whether to perform two-sided test</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>dict</code>: Test results including <code>statistic</code>, <code>p_value</code>, <code>critical_value</code>, <code>is_outlier</code>, <code>outlier_value</code>, <code>outlier_index</code></p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">result = cleaner.grubbs_test('values', alpha=0.05)
+print(f"P-value: {result['p_value']:.6f}")
+print(f"Outlier: {result['is_outlier']}")
+print(f"Value: {result['outlier_value']}")
+print(f"Index: {result['outlier_index']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dixon Q Test -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>dixon_q_test(column, alpha=0.05)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Perform Dixon's Q-test for small samples (n < 30).</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to test</li>
+                                        <li><code>alpha</code> (float): Significance level</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>dict</code>: Test results including <code>statistic</code>, <code>critical_value</code>, <code>p_value</code>, <code>is_outlier</code></p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">result = cleaner.dixon_q_test('values', alpha=0.05)
+print(f"Q-statistic: {result['statistic']:.3f}")
+print(f"Critical: {result['critical_value']:.3f}")
+print(f"P-value: {result['p_value']:.6f}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Data Transformations -->
+                <section id="transformations" class="mb-5">
+                    <h2><i class="fas fa-exchange-alt me-2"></i>Data Transformations</h2>
+                    <p>Methods for transforming data to improve normality and reduce skewness.</p>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><code>transform_boxcox(column, lambda_param=None)</code></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Apply Box-Cox transformation with automatic lambda estimation.</p>
+                                    
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to transform</li>
+                                        <li><code>lambda_param</code> (float): Transformation parameter (auto if None)</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>tuple</code>: (self, transformation_info_dict)</p>
+                                    
+                                    <pre><code class="language-python">_, info = cleaner.transform_boxcox('income')
+print(f"Lambda: {info['lambda']:.3f}")
+print(f"Skewness before: {info['skewness_before']:.3f}")
+print(f"Skewness after: {info['skewness_after']:.3f}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><code>recommend_transformation(column)</code></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Automatically recommend best transformation based on distribution.</p>
+                                    
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to analyze</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>dict</code>: Recommendations including best transformation and improvement metrics</p>
+                                    
+                                    <pre><code class="language-python">rec = cleaner.recommend_transformation('income')
+print(f"Method: {rec['recommended_method']}")
+print(f"Improvement: {rec['expected_improvement']:.3f}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6>Additional Transformation Methods:</h6>
+                        <ul class="mb-0">
+                            <li><code>transform_log(column, base='natural')</code> - Logarithmic transformation (natural, base 10, base 2)</li>
+                            <li><code>transform_sqrt(column)</code> - Square root transformation</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Analysis Methods -->
+                <section id="analysis" class="mb-5">
+                    <h2><i class="fas fa-chart-bar me-2"></i>Analysis Methods</h2>
+                    <p>Methods for analyzing data distribution and comparing detection methods.</p>
+                    
+                    <!-- Distribution Analysis -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>analyze_distribution(column)</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Comprehensive distribution analysis with statistical tests and method recommendations.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>column</code> (str): Column name to analyze</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>dict</code>: Distribution analysis including skewness, kurtosis, normality test, recommended method</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">analysis = cleaner.analyze_distribution('income')
+print(f"Skewness: {analysis['skewness']:.3f}")
+print(f"Kurtosis: {analysis['kurtosis']:.3f}")
+print(f"Normal p-value: {analysis['normality_test']['p_value']:.6f}")
+print(f"Recommended: {analysis['recommended_method']}")
+print(f"Reason: {analysis['recommendation_reason']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Method Comparison -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><code>compare_methods(columns, methods=['iqr', 'zscore', 'modified_zscore'])</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Compare agreement between different detection methods.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>columns</code> (list): Column names to compare</li>
+                                        <li><code>methods</code> (list): Detection methods to compare</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>dict</code>: Method comparison results and agreement statistics</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">comparison = cleaner.compare_methods(
+    ['income'], 
+    methods=['iqr', 'zscore', 'modified_zscore']
+)
+
+for method, stats in comparison['income']['method_stats'].items():
+    print(f"{method}: {stats['outliers_detected']} outliers")
+    
+print(f"Summary: {comparison['income']['summary']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Visualization -->
+                <section id="visualization" class="mb-5">
+                    <h2><i class="fas fa-chart-area me-2"></i>Visualization</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><code>plot_outlier_analysis(columns=None, figsize=(15, 5))</code></h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Generate comprehensive outlier analysis plots for specified columns.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>columns</code> (list): Columns to plot (defaults to all numeric)</li>
+                                        <li><code>figsize</code> (tuple): Base figure size for each subplot</li>
+                                    </ul>
+                                    
+                                    <h6>Returns:</h6>
+                                    <p class="small"><code>dict</code>: Dictionary of matplotlib figures keyed by column names</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">figures = cleaner.plot_outlier_analysis(['income', 'age'])
+
+# Save figures
+for column, fig in figures.items():
+    fig.savefig(f'{column}_analysis.png', 
+                dpi=300, bbox_inches='tight')
+
+# Display specific figure
+import matplotlib.pyplot as plt
+plt.show(figures['income'])</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Utility Methods -->
+                <section id="utilities" class="mb-5">
+                    <h2><i class="fas fa-cogs me-2"></i>Utility Methods</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><code>get_outlier_stats(columns=None, include_indices=False)</code></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Get comprehensive outlier statistics without removing data.</p>
+                                    
+                                    <pre><code class="language-python">stats = cleaner.get_outlier_stats(
+    ['income', 'age'], 
+    include_indices=True
+)
+print(stats)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><code>set_thresholds(**kwargs)</code></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Configure default thresholds for detection methods.</p>
+                                    
+                                    <pre><code class="language-python">cleaner.set_thresholds(
+    iqr_lower_factor=2.0,
+    iqr_upper_factor=2.0,
+    zscore_threshold=2.5,
+    modified_zscore_threshold=4.0
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><code>clean_columns(columns, method='auto', **kwargs)</code></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Batch process multiple columns with progress tracking.</p>
+                                    
+                                    <pre><code class="language-python">cleaned_df, info = cleaner.clean_columns(
+    columns=['income', 'age'],
+    method='auto',
+    show_progress=True,
+    include_indices=True
+)
+
+for col, details in info.items():
+    print(f"{col}: {details['outliers_removed']} removed")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><code>get_summary_report()</code></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Generate a comprehensive summary report of all cleaning operations.</p>
+                                    
+                                    <pre><code class="language-python">report = cleaner.get_summary_report()
+print(report)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Utility Functions -->
+                <section id="utility-functions" class="mb-5">
+                    <h2><i class="fas fa-puzzle-piece me-2"></i>Utility Functions</h2>
+                    <p>Standalone utility functions in the <code>statclean.utils</code> module.</p>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Visualization Functions</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled small">
+                                        <li><code>plot_outliers(data, outliers, title="Outlier Analysis")</code></li>
+                                        <li><code>plot_distribution(data, outliers, title="Distribution Analysis")</code></li>
+                                        <li><code>plot_boxplot(data, outliers, title="Box Plot Analysis")</code></li>
+                                        <li><code>plot_qq(data, outliers, title="Q-Q Plot")</code></li>
+                                        <li><code>plot_outlier_analysis(data, outliers, title="Comprehensive Analysis")</code></li>
+                                    </ul>
+                                    
+                                    <h6>Example:</h6>
+                                    <pre><code class="language-python">from statclean.utils import plot_outliers, plot_distribution
+
+outliers = cleaner.detect_outliers_zscore('income')
+plot_outliers(df['income'], outliers, 'Income Analysis')
+plot_distribution(df['income'], outliers, 'Income Distribution')</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Function Parameters</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Common Parameters:</h6>
+                                    <ul class="small">
+                                        <li><code>data</code> (pandas.Series): The data to plot</li>
+                                        <li><code>outliers</code> (pandas.Series): Boolean mask of outliers</li>
+                                        <li><code>title</code> (str): Plot title</li>
+                                        <li><code>figsize</code> (tuple): Figure size</li>
+                                    </ul>
+                                    
+                                    <div class="alert alert-info small">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        All utility functions create matplotlib figures that can be displayed, saved, or customized further.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Properties and Attributes -->
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle me-2"></i>Key Properties</h5>
+                    <p class="mb-2">Access cleaned data and outlier information:</p>
+                    <ul class="mb-0">
+                        <li><code>cleaner.clean_df</code> - Cleaned DataFrame after outlier treatment</li>
+                        <li><code>cleaner.outlier_info</code> - Detailed information about removed outliers</li>
+                        <li><code>cleaner.original_df</code> - Original DataFrame (preserved)</li>
+                        <li><code>cleaner.data</code> - Current working DataFrame</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Scrollspy for sidebar navigation
+        const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+            target: '.scrollspy-nav',
+            offset: 100
+        });
+        
+        // Smooth scrolling
+        document.querySelectorAll('.scrollspy-nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

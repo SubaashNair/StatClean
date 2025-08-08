@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistical Methods - StatClean</title>
+    <meta name="description" content="Comprehensive guide to statistical methods and mathematical foundations in StatClean.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-chart-line me-2"></i>StatClean
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="installation.html">Installation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="examples.html">Examples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="statistical-methods.html">Methods</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="api-reference.html">API</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex">
+                    <a href="https://github.com/SubaashNair/StatClean" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-github me-1"></i>GitHub
+                    </a>
+                    <a href="https://pypi.org/project/statclean/" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i>Install
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 sidebar">
+                <nav class="nav flex-column scrollspy-nav">
+                    <a class="nav-link active" href="#method-selection">Method Selection</a>
+                    <a class="nav-link" href="#univariate">Univariate Methods</a>
+                    <a class="nav-link" href="#multivariate">Multivariate Methods</a>
+                    <a class="nav-link" href="#formal-tests">Formal Tests</a>
+                    <a class="nav-link" href="#transformations">Transformations</a>
+                    <a class="nav-link" href="#guidelines">Selection Guidelines</a>
+                    <a class="nav-link" href="#considerations">Statistical Considerations</a>
+                    <a class="nav-link" href="#validation">Validation</a>
+                </nav>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9 content-area">
+                <h1><i class="fas fa-flask me-3"></i>Statistical Methods</h1>
+                <p class="lead">Comprehensive guide to the mathematical foundations and appropriate use cases for each statistical method in StatClean.</p>
+                
+                <!-- Method Selection Guide -->
+                <section id="method-selection" class="mb-5">
+                    <h2>Method Selection Guide</h2>
+                    <p>Interactive decision tree to help choose the right statistical method:</p>
+                    
+                    <div class="flow-chart">
+                        <div id="methodSelectionDiagram"></div>
+                    </div>
+                </section>
+                
+                <!-- Univariate Methods -->
+                <section id="univariate" class="mb-5">
+                    <h2><i class="fas fa-chart-line me-2"></i>Univariate Methods</h2>
+                    
+                    <!-- IQR Method -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4><i class="fas fa-box me-2"></i>Interquartile Range (IQR)</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p><strong>Method:</strong> <code>detect_outliers_iqr()</code></p>
+                                    
+                                    <h5>Mathematical Formula:</h5>
+                                    <div class="alert alert-light">
+                                        <p>Lower Bound = Q₁ - (lower_factor × IQR)</p>
+                                        <p>Upper Bound = Q₃ + (upper_factor × IQR)</p>
+                                        <p class="mb-0">where IQR = Q₃ - Q₁</p>
+                                    </div>
+                                    
+                                    <h5>Use Cases:</h5>
+                                    <ul>
+                                        <li>Non-normal distributions</li>
+                                        <li>Skewed data</li>
+                                        <li>Robust to extreme values</li>
+                                        <li>No distributional assumptions</li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>Code Example:</h5>
+                                    <pre><code class="language-python"># Standard IQR (1.5 × IQR)
+outliers = cleaner.detect_outliers_iqr('column')
+
+# Conservative (2.0 × IQR)
+outliers = cleaner.detect_outliers_iqr(
+    'column', 
+    lower_factor=2.0, 
+    upper_factor=2.0
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Z-Score Method -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4><i class="fas fa-calculator me-2"></i>Z-Score Method</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p><strong>Method:</strong> <code>detect_outliers_zscore()</code></p>
+                                    
+                                    <h5>Mathematical Formula:</h5>
+                                    <div class="alert alert-light">
+                                        <p>Z = (x - μ) / σ</p>
+                                        <p class="mb-0">Outlier if |Z| > threshold (typically 3.0)</p>
+                                    </div>
+                                    
+                                    <h5>Use Cases:</h5>
+                                    <ul>
+                                        <li>Normally distributed data</li>
+                                        <li>Standardized thresholds needed</li>
+                                        <li>Large sample sizes (n > 30)</li>
+                                    </ul>
+                                    
+                                    <h5>Assumptions:</h5>
+                                    <ul>
+                                        <li>Data follows normal distribution</li>
+                                        <li>Sample statistics represent population</li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>Code Example:</h5>
+                                    <pre><code class="language-python"># Standard threshold (|Z| > 3)
+outliers = cleaner.detect_outliers_zscore('column')
+
+# More sensitive (|Z| > 2.5)
+outliers = cleaner.detect_outliers_zscore(
+    'column', 
+    threshold=2.5
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modified Z-Score -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4><i class="fas fa-shield-alt me-2"></i>Modified Z-Score (MAD-based)</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p><strong>Method:</strong> <code>detect_outliers_modified_zscore()</code></p>
+                                    
+                                    <h5>Mathematical Formula:</h5>
+                                    <div class="alert alert-light">
+                                        <p>Modified Z = 0.6745 × (x - median) / MAD</p>
+                                        <p>where MAD = median(|x - median(x)|)</p>
+                                        <p class="mb-0">Outlier if |Modified Z| > threshold (typically 3.5)</p>
+                                    </div>
+                                    
+                                    <h5>Advantages:</h5>
+                                    <ul>
+                                        <li>Robust to outliers (uses median)</li>
+                                        <li>Works with non-normal data</li>
+                                        <li>Less sensitive to extreme values</li>
+                                        <li>Suitable for small samples</li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>Code Example:</h5>
+                                    <pre><code class="language-python"># Standard MAD threshold
+outliers = cleaner.detect_outliers_modified_zscore('column')
+
+# More conservative
+outliers = cleaner.detect_outliers_modified_zscore(
+    'column', 
+    threshold=4.0
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Multivariate Methods -->
+                <section id="multivariate" class="mb-5">
+                    <h2><i class="fas fa-project-diagram me-2"></i>Multivariate Methods</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-cube me-2"></i>Mahalanobis Distance</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p><strong>Method:</strong> <code>detect_outliers_mahalanobis()</code></p>
+                                    
+                                    <h5>Mathematical Formula:</h5>
+                                    <div class="alert alert-light">
+                                        <p>D² = (x - μ)ᵀ Σ⁻¹ (x - μ)</p>
+                                        <p>where μ is mean vector, Σ is covariance matrix</p>
+                                        <p class="mb-0">Outlier if D² > χ²(p, α) threshold</p>
+                                    </div>
+                                    
+                                    <h5>Use Cases:</h5>
+                                    <ul>
+                                        <li>Multivariate outlier detection</li>
+                                        <li>Correlated variables</li>
+                                        <li>Unusual combinations of values</li>
+                                        <li>High-dimensional data</li>
+                                    </ul>
+                                    
+                                    <h5>Assumptions:</h5>
+                                    <ul>
+                                        <li>Multivariate normality (approximately)</li>
+                                        <li>Variables are correlated</li>
+                                        <li>Sufficient sample size for covariance</li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>Code Example:</h5>
+                                    <pre><code class="language-python"># 95th percentile threshold
+outliers = cleaner.detect_outliers_mahalanobis(
+    ['var1', 'var2', 'var3']
+)
+
+# 99th percentile with shrinkage
+outliers = cleaner.detect_outliers_mahalanobis(
+    ['var1', 'var2'], 
+    chi2_threshold=0.99,
+    use_shrinkage=True
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Formal Statistical Tests -->
+                <section id="formal-tests" class="mb-5">
+                    <h2><i class="fas fa-microscope me-2"></i>Formal Statistical Tests</h2>
+                    
+                    <!-- Grubbs Test -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4><i class="fas fa-search me-2"></i>Grubbs' Test</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p><strong>Method:</strong> <code>grubbs_test()</code></p>
+                                    <p><strong>Purpose:</strong> Test for single outliers in univariate normal data</p>
+                                    
+                                    <h5>Mathematical Formula:</h5>
+                                    <div class="alert alert-light">
+                                        <p>G = max|x - x̄| / s</p>
+                                        <p class="mb-0">where s is sample standard deviation</p>
+                                    </div>
+                                    
+                                    <h5>Hypotheses:</h5>
+                                    <ul>
+                                        <li>H₀: No outliers present</li>
+                                        <li>H₁: One outlier present</li>
+                                    </ul>
+                                    
+                                    <h5>Assumptions:</h5>
+                                    <ul>
+                                        <li>Data follows normal distribution</li>
+                                        <li>Testing for at most one outlier</li>
+                                        <li>Independent observations</li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>Code Example:</h5>
+                                    <pre><code class="language-python">result = cleaner.grubbs_test(
+    'column', 
+    alpha=0.05
+)
+print(f"P-value: {result['p_value']}")
+print(f"Outlier: {result['is_outlier']}")
+print(f"Statistic: {result['statistic']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dixon Q Test -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4><i class="fas fa-vial me-2"></i>Dixon's Q-Test</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <p><strong>Method:</strong> <code>dixon_q_test()</code></p>
+                                    <p><strong>Purpose:</strong> Test for outliers in small samples (n < 30)</p>
+                                    
+                                    <h5>Mathematical Formula:</h5>
+                                    <div class="alert alert-light">
+                                        <p>Q = gap / range</p>
+                                        <p class="mb-0">where gap is difference to nearest neighbor</p>
+                                    </div>
+                                    
+                                    <h5>Use Cases:</h5>
+                                    <ul>
+                                        <li>Small sample sizes (n < 30)</li>
+                                        <li>Formal statistical testing needed</li>
+                                        <li>Quality control applications</li>
+                                        <li>Laboratory measurements</li>
+                                    </ul>
+                                    
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Note:</strong> Recommended only for small sample sizes (n < 30)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h5>Code Example:</h5>
+                                    <pre><code class="language-python">result = cleaner.dixon_q_test(
+    'column', 
+    alpha=0.05
+)
+print(f"Q-statistic: {result['statistic']}")
+print(f"Critical value: {result['critical_value']}")
+print(f"P-value: {result['p_value']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Data Transformations -->
+                <section id="transformations" class="mb-5">
+                    <h2><i class="fas fa-exchange-alt me-2"></i>Data Transformations</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Box-Cox Transformation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Formula:</strong></p>
+                                    <div class="alert alert-light small">
+                                        <p>y(λ) = (x<sup>λ</sup> - 1) / λ  if λ ≠ 0</p>
+                                        <p class="mb-0">y(λ) = ln(x)  if λ = 0</p>
+                                    </div>
+                                    <p><strong>Purpose:</strong> Normalize skewed distributions, stabilize variance</p>
+                                    <pre><code class="language-python">result = cleaner.transform_boxcox('column')
+print(f"Lambda: {result['lambda']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Logarithmic Transformation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Variants:</strong> Natural log (ln), Base 10, Base 2</p>
+                                    <p><strong>Purpose:</strong> Reduce right skewness, handle multiplicative relationships</p>
+                                    <p><strong>Use Cases:</strong></p>
+                                    <ul class="small">
+                                        <li>Exponential growth data</li>
+                                        <li>Financial data</li>
+                                        <li>Count data with large ranges</li>
+                                    </ul>
+                                    <pre><code class="language-python">result = cleaner.transform_log(
+    'column', 
+    base='natural'
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5>Square Root Transformation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Formula:</strong> y = √x</p>
+                                    <p><strong>Purpose:</strong> Moderate right skewness, Poisson data</p>
+                                    <p><strong>Use Cases:</strong></p>
+                                    <ul class="small">
+                                        <li>Count data transformation</li>
+                                        <li>Variance stabilization</li>
+                                        <li>Moderate skewness reduction</li>
+                                    </ul>
+                                    <pre><code class="language-python">result = cleaner.transform_sqrt('column')</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Selection Guidelines -->
+                <section id="guidelines" class="mb-5">
+                    <h2><i class="fas fa-compass me-2"></i>Method Selection Guidelines</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h4>Distribution-Based Selection</h4>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Distribution</th>
+                                            <th>Primary Method</th>
+                                            <th>Alternative</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Normal</td>
+                                            <td>Z-score</td>
+                                            <td>Grubbs' test</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Skewed</td>
+                                            <td>Modified Z-score</td>
+                                            <td>IQR</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Unknown</td>
+                                            <td>IQR</td>
+                                            <td>Modified Z-score</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Small (n < 30)</td>
+                                            <td>Dixon's Q-test</td>
+                                            <td>IQR</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Multivariate</td>
+                                            <td>Mahalanobis</td>
+                                            <td>Multiple univariate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <h4>Automatic Method Selection</h4>
+                            <p>StatClean automatically recommends methods based on:</p>
+                            <ul>
+                                <li>Sample size</li>
+                                <li>Skewness level</li>
+                                <li>Kurtosis</li>
+                                <li>Normality test results</li>
+                            </ul>
+                            
+                            <div class="card">
+                                <div class="card-body">
+                                    <pre><code class="language-python">analysis = cleaner.analyze_distribution('column')
+print(f"Recommended: {analysis['recommended_method']}")
+print(f"Reason: {analysis['recommendation_reason']}")</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Statistical Considerations -->
+                <section id="considerations" class="mb-5">
+                    <h2><i class="fas fa-balance-scale me-2"></i>Statistical Considerations</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Type I and Type II Errors</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Type I Error (False Positive):</h6>
+                                    <ul class="small">
+                                        <li>Incorrectly identifying normal points as outliers</li>
+                                        <li>Controlled by significance level (α)</li>
+                                        <li>Lower α = fewer false positives, more missed outliers</li>
+                                    </ul>
+                                    
+                                    <h6>Type II Error (False Negative):</h6>
+                                    <ul class="small">
+                                        <li>Missing actual outliers</li>
+                                        <li>Influenced by effect size and sample size</li>
+                                        <li>Higher sensitivity = more false positives</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Robustness vs. Efficiency</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Robust Methods (IQR, MAD-based):</h6>
+                                    <ul class="small">
+                                        <li>Less affected by outliers</li>
+                                        <li>Work with various distributions</li>
+                                        <li>May be less efficient with normal data</li>
+                                    </ul>
+                                    
+                                    <h6>Efficient Methods (Z-score, Grubbs'):</h6>
+                                    <ul class="small">
+                                        <li>Optimal for normal distributions</li>
+                                        <li>More powerful when assumptions met</li>
+                                        <li>Sensitive to assumption violations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h5>Multiple Testing Correction</h5>
+                        <p class="mb-2">When testing multiple variables, consider:</p>
+                        <ul class="mb-0">
+                            <li>Bonferroni correction: α<sub>adjusted</sub> = α / n<sub>tests</sub></li>
+                            <li>False Discovery Rate (FDR) control</li>
+                            <li>Sequential testing procedures</li>
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Validation -->
+                <section id="validation" class="mb-5">
+                    <h2><i class="fas fa-check-double me-2"></i>Validation and Diagnostics</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h4>Method Comparison</h4>
+                            <pre><code class="language-python">comparison = cleaner.compare_methods(
+    ['column'], 
+    methods=['iqr', 'zscore', 'modified_zscore']
+)</code></pre>
+                            <p>Use agreement between methods as validation:</p>
+                            <ul>
+                                <li><strong>High agreement:</strong> Confident identification</li>
+                                <li><strong>Low agreement:</strong> Investigate data characteristics</li>
+                                <li><strong>Consider multiple perspectives</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <h4>Distribution Assessment</h4>
+                            <pre><code class="language-python">analysis = cleaner.analyze_distribution('column')</code></pre>
+                            <p>Key diagnostics:</p>
+                            <ul>
+                                <li><strong>Skewness:</strong> |skew| < 0.5 (approximately normal)</li>
+                                <li><strong>Kurtosis:</strong> Normal ≈ 3, Heavy tails > 3</li>
+                                <li><strong>Shapiro-Wilk:</strong> p > 0.05 suggests normality</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Next Steps -->
+                <div class="alert alert-success">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>Ready to Apply?</h5>
+                    <p class="mb-3">Explore practical implementations and advanced examples:</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <a href="examples.html" class="btn btn-primary btn-sm me-2 mb-2">
+                                <i class="fas fa-code me-1"></i>View Examples
+                            </a>
+                            <a href="api-reference.html" class="btn btn-outline-primary btn-sm mb-2">
+                                <i class="fas fa-book me-1"></i>API Reference
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#2c5282',
+                primaryTextColor: '#1a202c',
+                primaryBorderColor: '#3182ce',
+                lineColor: '#718096'
+            }
+        });
+        
+        // Method selection diagram
+        mermaid.render('methodSelectionSVG', `
+            flowchart TD
+                A[Start with Data] --> B{Data Size?}
+                B -->|n < 30| C[Dixon Q-test]
+                B -->|n ≥ 30| D{Distribution Type?}
+                
+                D -->|Normal| E[Z-score or Grubbs]
+                D -->|Non-normal/Skewed| F[Modified Z-score or IQR]
+                D -->|Multiple Variables| G[Mahalanobis Distance]
+                
+                E --> H{Need p-values?}
+                H -->|Yes| I[Grubbs Test]
+                H -->|No| J[Z-score Detection]
+                
+                F --> K{Robust Required?}
+                K -->|Yes| L[Modified Z-score]
+                K -->|No| M[IQR Method]
+                
+                G --> N{High Correlation?}
+                N -->|Yes| O[Use Shrinkage Covariance]
+                N -->|No| P[Standard Mahalanobis]
+        `).then((result) => {
+            document.getElementById('methodSelectionDiagram').innerHTML = result.svg;
+        });
+        
+        // Scrollspy for sidebar navigation
+        const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+            target: '.scrollspy-nav',
+            offset: 100
+        });
+        
+        // Smooth scrolling
+        document.querySelectorAll('.scrollspy-nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

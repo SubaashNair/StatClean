@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Guide - StatClean</title>
+    <meta name="description" content="Complete installation guide for StatClean statistical data preprocessing library.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-chart-line me-2"></i>StatClean
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="installation.html">Installation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="examples.html">Examples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistical-methods.html">Methods</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="api-reference.html">API</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex">
+                    <a href="https://github.com/SubaashNair/StatClean" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-github me-1"></i>GitHub
+                    </a>
+                    <a href="https://pypi.org/project/statclean/" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i>Install
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 sidebar">
+                <nav class="nav flex-column scrollspy-nav">
+                    <a class="nav-link active" href="#quick-install">Quick Install</a>
+                    <a class="nav-link" href="#requirements">Requirements</a>
+                    <a class="nav-link" href="#development">Development</a>
+                    <a class="nav-link" href="#verification">Verification</a>
+                    <a class="nav-link" href="#compatibility">Compatibility</a>
+                    <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+                    <a class="nav-link" href="#docker">Docker</a>
+                    <a class="nav-link" href="#ide-setup">IDE Setup</a>
+                </nav>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9 content-area">
+                <h1><i class="fas fa-download me-3"></i>Installation Guide</h1>
+                
+                <!-- Quick Install -->
+                <section id="quick-install" class="mb-5">
+                    <h2>Quick Install</h2>
+                    <p class="lead">Get started with StatClean in seconds using pip.</p>
+                    
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-terminal me-2"></i>From PyPI (Recommended)</h5>
+                                </div>
+                                <div class="card-body">
+                                    <pre><code class="language-bash">pip install statclean</code></pre>
+                                    <p class="mt-3 mb-0 text-muted">This installs the latest stable version with all required dependencies.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Requirements -->
+                <section id="requirements" class="mb-5">
+                    <h2>Requirements</h2>
+                    <p>StatClean requires Python 3.7 or higher and the following packages:</p>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h4>Core Dependencies</h4>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>numpy</strong></span>
+                                    <span class="badge bg-secondary">≥ 1.19.0</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>pandas</strong></span>
+                                    <span class="badge bg-secondary">≥ 1.2.0</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>matplotlib</strong></span>
+                                    <span class="badge bg-secondary">≥ 3.3.0</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>seaborn</strong></span>
+                                    <span class="badge bg-secondary">≥ 0.11.0</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>scipy</strong></span>
+                                    <span class="badge bg-secondary">≥ 1.6.0</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>tqdm</strong></span>
+                                    <span class="badge bg-secondary">≥ 4.60.0</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <h4>Optional Dependencies</h4>
+                            <div class="alert alert-info">
+                                <h5>scikit-learn ≥ 0.24.0</h5>
+                                <p class="mb-0">For shrinkage covariance estimation in Mahalanobis distance calculations and example datasets.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Development Installation -->
+                <section id="development" class="mb-5">
+                    <h2>Development Installation</h2>
+                    <p>For contributing or accessing the latest features:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-bash"># Clone repository
+git clone https://github.com/SubaashNair/StatClean.git
+cd StatClean
+
+# Install in development mode
+pip install -e .
+
+# Install development dependencies
+pip install -r requirements.txt</code></pre>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Verification -->
+                <section id="verification" class="mb-5">
+                    <h2>Verification</h2>
+                    <p>Test your installation with this simple verification script:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-python">import statclean
+from statclean import StatClean
+import pandas as pd
+
+# Quick test
+df = pd.DataFrame({'test': [1, 2, 3, 100, 4]})
+cleaner = StatClean(df)
+print("StatClean installed successfully!")
+print(f"Version: {statclean.__version__}")</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success mt-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        If no errors appear, StatClean is properly installed!
+                    </div>
+                </section>
+                
+                <!-- Platform Compatibility -->
+                <section id="compatibility" class="mb-5">
+                    <h2>Platform Compatibility</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h4>Operating Systems</h4>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <i class="fab fa-windows text-primary me-2"></i>
+                                    <strong>Windows</strong> (10+)
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fab fa-apple text-dark me-2"></i>
+                                    <strong>macOS</strong> (10.14+)
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fab fa-linux text-warning me-2"></i>
+                                    <strong>Linux</strong> (Ubuntu 18.04+, CentOS 7+)
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <h4>Python Version Support</h4>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Python 3.7</span>
+                                    <i class="fas fa-check text-success"></i>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Python 3.8</span>
+                                    <i class="fas fa-check text-success"></i>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Python 3.9</span>
+                                    <i class="fas fa-check text-success"></i>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Python 3.10</span>
+                                    <i class="fas fa-check text-success"></i>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Python 3.11</span>
+                                    <i class="fas fa-check text-success"></i>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Python 3.12</span>
+                                    <i class="fas fa-check text-success"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Troubleshooting -->
+                <section id="troubleshooting" class="mb-5">
+                    <h2>Troubleshooting</h2>
+                    
+                    <div class="accordion" id="troubleshootAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#issue1">
+                                    ImportError: No module named 'statclean'
+                                </button>
+                            </h2>
+                            <div id="issue1" class="accordion-collapse collapse show" data-bs-parent="#troubleshootAccordion">
+                                <div class="accordion-body">
+                                    <pre><code class="language-bash"># Make sure you installed the package
+pip install statclean
+
+# Check if it's installed
+pip show statclean</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue2">
+                                    Dependency Conflicts
+                                </button>
+                            </h2>
+                            <div id="issue2" class="accordion-collapse collapse" data-bs-parent="#troubleshootAccordion">
+                                <div class="accordion-body">
+                                    <pre><code class="language-bash"># Create a fresh virtual environment
+python -m venv statclean_env
+source statclean_env/bin/activate  # On Windows: statclean_env\Scripts\activate
+pip install statclean</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue3">
+                                    Visualization Issues
+                                </button>
+                            </h2>
+                            <div id="issue3" class="accordion-collapse collapse" data-bs-parent="#troubleshootAccordion">
+                                <div class="accordion-body">
+                                    <pre><code class="language-bash"># For headless servers, set matplotlib backend
+export MPLBACKEND=Agg</code></pre>
+                                    <p class="mt-2">Add this to your script for programmatic backend setting:</p>
+                                    <pre><code class="language-python">import matplotlib
+matplotlib.use('Agg')  # Must be before importing pyplot</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue4">
+                                    Performance Optimization
+                                </button>
+                            </h2>
+                            <div id="issue4" class="accordion-collapse collapse" data-bs-parent="#troubleshootAccordion">
+                                <div class="accordion-body">
+                                    <pre><code class="language-bash"># Install optimized numerical libraries
+pip install numpy[mkl] pandas[performance]
+
+# For Intel processors
+conda install mkl mkl-service</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Docker -->
+                <section id="docker" class="mb-5">
+                    <h2>Docker Installation</h2>
+                    <p>Use StatClean in a containerized environment:</p>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <pre><code class="language-dockerfile">FROM python:3.9-slim
+
+# Install StatClean
+RUN pip install statclean
+
+# Set working directory
+WORKDIR /app
+
+# Copy your application
+COPY . .
+
+# Run your application
+CMD ["python", "your_script.py"]</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <h5>Conda Installation</h5>
+                        <p class="mb-1">StatClean will be available on conda-forge soon:</p>
+                        <code>conda install -c conda-forge statclean</code>
+                    </div>
+                </section>
+                
+                <!-- IDE Setup -->
+                <section id="ide-setup" class="mb-5">
+                    <h2>IDE Setup</h2>
+                    
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-code me-2"></i>VS Code</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Install the Python extension and StatClean will provide full IntelliSense support with type hints.</p>
+                                    <small class="text-muted">Recommended extensions: Python, Pylance</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-code me-2"></i>PyCharm</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>StatClean includes comprehensive type annotations for excellent PyCharm integration.</p>
+                                    <small class="text-muted">Professional and Community editions supported</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-book me-2"></i>Jupyter</h5>
+                                </div>
+                                <div class="card-body">
+                                    <pre><code class="language-bash">pip install jupyter
+jupyter notebook</code></pre>
+                                    <p class="mt-2">Then import StatClean:</p>
+                                    <pre><code class="language-python">from statclean import StatClean</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Next Steps -->
+                <div class="alert alert-success">
+                    <h5><i class="fas fa-rocket me-2"></i>Next Steps</h5>
+                    <p class="mb-3">Now that StatClean is installed, explore the documentation:</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <a href="examples.html" class="btn btn-primary btn-sm me-2 mb-2">
+                                <i class="fas fa-code me-1"></i>View Examples
+                            </a>
+                            <a href="statistical-methods.html" class="btn btn-outline-primary btn-sm mb-2">
+                                <i class="fas fa-flask me-1"></i>Learn Methods
+                            </a>
+                        </div>
+                        <div class="col-lg-6">
+                            <a href="api-reference.html" class="btn btn-outline-secondary btn-sm me-2 mb-2">
+                                <i class="fas fa-book me-1"></i>API Reference
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Scrollspy for sidebar navigation
+        const scrollSpy = new bootstrap.ScrollSpy(document.body, {
+            target: '.scrollspy-nav',
+            offset: 100
+        });
+        
+        // Smooth scrolling
+        document.querySelectorAll('.scrollspy-nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

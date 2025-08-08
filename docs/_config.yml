@@ -1,31 +1,15 @@
+# StatClean Documentation
+# Static HTML files, no Jekyll processing needed
+
 title: StatClean
 description: Comprehensive statistical data preprocessing and outlier detection library
-theme: minima
 url: "https://subaashnair.github.io"
 baseurl: "/StatClean"
 
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-
-# Mermaid configuration
-mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
-
+# Disable Jekyll processing for HTML files
+plugins: []
 markdown: kramdown
 highlighter: rouge
-
-navigation:
-  - title: Home
-    url: /
-  - title: API Reference
-    url: /api-reference
-  - title: Statistical Methods
-    url: /statistical-methods
-  - title: Examples
-    url: /examples
-  - title: Installation
-    url: /installation
 
 github:
   repository_url: "https://github.com/SubaashNair/StatClean"
