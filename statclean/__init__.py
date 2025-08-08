@@ -11,7 +11,7 @@ This package provides advanced statistical methods for data cleaning including:
 Designed for academic research, data science, and statistical analysis.
 """
 
-__version__ = '0.1.0'
+__version__ = '0.1.3'
 __author__ = 'Subashanan Nair'
 
 from .cleaner import StatClean

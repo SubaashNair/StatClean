@@ -5,6 +5,27 @@ All notable changes to StatClean will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2025-08-08
+
+### Changed
+- Align docs/examples with actual API: remover methods return `self`; retrieve cleaned data via `cleaner.clean_df`.
+- Grubbs/Dixon docs updated to use keys `statistic` and `is_outlier`.
+- Clarified Mahalanobis `chi2_threshold` semantics; now accepts percentile in (0,1] or absolute chi-square statistic.
+- Seaborn plotting updated to explicit `y=`/`x=` to improve compatibility.
+- Transformations (`Box-Cox`, `log`, `sqrt`) preserve NaN positions; Box-Cox now computes on non-NA values only.
+- `analyze_distribution` is NaN-safe and limits Shapiro sample size.
+- Improved Mahalanobis stability: condition checks, pseudoinverse fallback, optional shrinkage covariance (`use_shrinkage`).
+- Replaced prints with `warnings.warn` where appropriate.
+
+### Added
+- GitHub Actions workflow for building and publishing to PyPI on release tags.
+
+### Fixed
+- Example unpacking errors and empty DataFrame init expectation in examples/tests.
+- Modified Z-score visualization now computes and labels bounds correctly.
+
+---
+
 ## [0.1.0] - 2025-08-06
 
 ### 🎉 Initial Release of StatClean

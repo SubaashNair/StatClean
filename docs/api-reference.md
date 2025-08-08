@@ -45,12 +45,13 @@ Detect outliers using Modified Z-score (MAD-based) method.
 **Returns:**
 - `pandas.Series`: Boolean mask indicating outliers
 
-#### `detect_outliers_mahalanobis(columns, chi2_threshold=0.95)`
+#### `detect_outliers_mahalanobis(columns, chi2_threshold=None, use_shrinkage=False)`
 Detect multivariate outliers using Mahalanobis distance.
 
 **Parameters:**
 - `columns` (list): List of column names for multivariate analysis
-- `chi2_threshold` (float): Chi-square threshold percentile
+- `chi2_threshold` (float): If `None`, defaults to 97.5th percentile; if `0 < value <= 1`, treated as percentile; otherwise treated as absolute chi-square threshold
+- `use_shrinkage` (bool): Use Ledoit–Wolf shrinkage covariance estimator when available (requires scikit-learn); falls back to sample covariance otherwise
 
 **Returns:**
 - `pandas.Series`: Boolean mask indicating outliers
@@ -86,7 +87,7 @@ Perform Grubbs' test for outliers with statistical significance.
 - `two_sided` (bool): Whether to perform two-sided test
 
 **Returns:**
-- `dict`: Test results including p-value, test statistic, critical value
+- `dict`: Test results including `statistic`, `p_value`, `critical_value`, `is_outlier`, `outlier_value`, `outlier_index`
 
 #### `dixon_q_test(column, alpha=0.05)`
 Perform Dixon's Q-test for small samples (n < 30).
@@ -96,7 +97,7 @@ Perform Dixon's Q-test for small samples (n < 30).
 - `alpha` (float): Significance level
 
 **Returns:**
-- `dict`: Test results including Q-statistic, critical value, p-value
+- `dict`: Test results including `statistic`, `critical_value`, `p_value`, `is_outlier`
 
 ### Data Transformations
 

@@ -89,10 +89,13 @@ def test_initialization(results: TestResults, df: pd.DataFrame):
         cleaner_preserve = StatClean(df, preserve_index=True)
         results.add_pass("Initialization with preserve_index=True")
         
-        # Test with empty DataFrame
-        empty_df = pd.DataFrame()
-        cleaner_empty = StatClean(empty_df)
-        results.add_pass("Initialization with empty DataFrame")
+        # Test with empty DataFrame should raise ValueError
+        try:
+            empty_df = pd.DataFrame()
+            StatClean(empty_df)
+            results.add_fail("Initialization with empty DataFrame", "Expected ValueError not raised")
+        except ValueError:
+            results.add_pass("Initialization with empty DataFrame", "Correctly raised ValueError")
         
     except Exception as e:
         results.add_fail("Initialization", str(e))
@@ -147,7 +150,8 @@ def test_outlier_detection_methods(results: TestResults, df: pd.DataFrame):
     
     # Test IQR method
     try:
-        cleaned_df, info = cleaner.remove_outliers_iqr(test_column)
+        cleaner.remove_outliers_iqr(test_column)
+        info = cleaner.outlier_info[test_column]
         results.add_pass("remove_outliers_iqr", 
                         f"Removed {info['num_outliers']} outliers, {info['percent_removed']:.1f}%")
     except Exception as e:
@@ -155,7 +159,8 @@ def test_outlier_detection_methods(results: TestResults, df: pd.DataFrame):
     
     # Test Z-score method
     try:
-        cleaned_df, info = cleaner.remove_outliers_zscore(test_column)
+        cleaner.remove_outliers_zscore(test_column)
+        info = cleaner.outlier_info[test_column]
         results.add_pass("remove_outliers_zscore", 
                         f"Removed {info['num_outliers']} outliers, {info['percent_removed']:.1f}%")
     except Exception as e:
@@ -163,7 +168,8 @@ def test_outlier_detection_methods(results: TestResults, df: pd.DataFrame):
     
     # Test Modified Z-score method
     try:
-        cleaned_df, info = cleaner.remove_outliers_modified_zscore(test_column)
+        cleaner.remove_outliers_modified_zscore(test_column)
+        info = cleaner.outlier_info[test_column]
         results.add_pass("remove_outliers_modified_zscore", 
                         f"Removed {info['num_outliers']} outliers, {info['percent_removed']:.1f}%")
     except Exception as e:

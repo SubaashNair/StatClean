@@ -29,11 +29,11 @@ print(f"Cleaned shape: {cleaned_df.shape}")
 # Formal statistical testing
 grubbs_result = cleaner.grubbs_test('income', alpha=0.05)
 print(f"P-value: {grubbs_result['p_value']:.6f}")
-print(f"Outlier detected: {grubbs_result['outlier_detected']}")
+print(f"Outlier detected: {grubbs_result['is_outlier']}")
 
 # Dixon's Q-test for small samples
 dixon_result = cleaner.dixon_q_test('age', alpha=0.05)
-print(f"Q-statistic: {dixon_result['q_statistic']:.3f}")
+print(f"Statistic: {dixon_result['statistic']:.3f}")
 ```
 
 ## Multivariate Analysis Example
@@ -52,11 +52,11 @@ cleaner.remove_outliers_mahalanobis(['income', 'age'])
 ```python
 # Automatic transformation recommendation
 recommendation = cleaner.recommend_transformation('income')
-print(f"Best transformation: {recommendation['best_transformation']}")
+print(f"Best transformation: {recommendation['recommended_method']}")
 
 # Apply Box-Cox transformation
-transformed = cleaner.transform_boxcox('income')
-print(f"Optimal lambda: {transformed['lambda']:.3f}")
+_, info = cleaner.transform_boxcox('income')
+print(f"Optimal lambda: {info['lambda']:.3f}")
 ```
 
 ## Method Chaining Example
@@ -80,9 +80,8 @@ print(f"Recommended method: {analysis['recommended_method']}")
 
 # Compare detection methods
 comparison = cleaner.compare_methods(['income'])
-print("Method Agreement:")
-for method, stats in comparison['income']['method_stats'].items():
-    print(f"  {method}: {stats['outliers_detected']} outliers")
+print("Method Comparison Summary:")
+print(comparison['income']['summary'])
 ```
 
 ## Visualization Example

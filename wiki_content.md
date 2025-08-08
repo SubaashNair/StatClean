@@ -1,10 +1,11 @@
-# GitHub Wiki Content for StatClean
+# GitHub Wiki Content for StatClean (v0.1.3)
 
 ## Home Page (Home.md)
 
 # Welcome to StatClean Wiki
 
 StatClean is a comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting.
+As of v0.1.3, remover methods return the cleaner instance for chaining; access results via `cleaner.clean_df` and `cleaner.outlier_info`.
 
 ## Quick Navigation
 
@@ -104,7 +105,7 @@ print(f"Cleaned shape: {cleaned_df.shape}")
 # Formal statistical test
 result = cleaner.grubbs_test('values', alpha=0.05)
 print(f"P-value: {result['p_value']:.6f}")
-print(f"Outlier detected: {result['outlier_detected']}")
+print(f"Outlier detected: {result['is_outlier']}")
 ```
 
 ## Method Chaining
@@ -181,12 +182,11 @@ for chunk in pd.read_csv('large_file.csv', chunksize=10000):
 export MPLBACKEND=Agg
 ```
 
-### Singular Matrix Error
-This occurs with perfectly correlated variables in Mahalanobis distance:
+### Mahalanobis Threshold and Stability
+`chi2_threshold` can be percentile (0<val<=1) or absolute chi-square statistic. Covariance inversion uses pseudoinverse when needed; optional shrinkage via scikit-learn's Ledoit–Wolf with `use_shrinkage=True`.
 ```python
-# Remove highly correlated variables first
+# Remove highly correlated variables first if instability persists
 correlation_matrix = df.corr()
-# Remove variables with correlation > 0.95
 ```
 
 ## Getting Help
@@ -210,10 +210,11 @@ pip install -e .
 pip install pytest
 ```
 
-## Running Tests
+## Running Tests (Headless)
 
 ```bash
-pytest tests/
+export MPLBACKEND=Agg
+pytest -q
 ```
 
 ## Code Style

@@ -485,11 +485,11 @@ class StatClean:
         # Process each column
         for col in columns:
             if col not in self.clean_df.columns:
-                print(f"Warning: Column '{col}' not found in DataFrame. Skipping.")
+                warnings.warn(f"Column '{col}' not found in DataFrame. Skipping.")
                 continue
                 
             if not np.issubdtype(self.clean_df[col].dtype, np.number):
-                print(f"Warning: Column '{col}' is not numeric. Skipping.")
+                warnings.warn(f"Column '{col}' is not numeric. Skipping.")
                 continue
             
             # Calculate Z-scores
@@ -503,7 +503,7 @@ class StatClean:
             
             # Handle zero standard deviation
             if col_std == 0 or pd.isna(col_std):
-                print(f"Warning: Column '{col}' has zero or NaN standard deviation. Setting Z-scores to 0.")
+                warnings.warn(f"Column '{col}' has zero or NaN standard deviation. Setting Z-scores to 0.")
                 self.clean_df[zscore_col] = 0.0
             else:
                 self.clean_df[zscore_col] = (self.clean_df[col] - col_mean) / col_std
@@ -535,7 +535,7 @@ class StatClean:
         original_cols = [col[:-7] for col in zscore_cols]  # Remove '_zscore' suffix
         
         if not zscore_cols:
-            print("No Z-score columns found. Use add_zscore_columns() first.")
+            warnings.warn("No Z-score columns found. Use add_zscore_columns() first.")
             return self.clean_df, self.outlier_info
         
         # Clean each column
@@ -661,10 +661,11 @@ class StatClean:
         # Use detection method
         outlier_mask = self.detect_outliers_zscore(column, threshold)
         
-        # If no outliers detected (due to zero std), return early
+        # If no outliers detected, record info and warn only when std is degenerate
         if not outlier_mask.any():
             mean, std, _ = self._calculate_zscore_stats(column, threshold)
-            print(f"Warning: Column '{column}' has zero or NaN standard deviation. No outliers detected.")
+            if std == 0 or pd.isna(std):
+                warnings.warn(f"Column '{column}' has zero or NaN standard deviation. No outliers detected.")
             self.outlier_info[column] = {
                 'method': 'Z-score',
                 'column': column,
@@ -868,13 +869,13 @@ class StatClean:
             fig, axes = plt.subplots(1, 3, figsize=figsize)
             fig.suptitle(f'Outlier Analysis for {column}', fontsize=14)
             
-            # Box plot - Fixed to use the correct data parameter format
-            sns.boxplot(data=self.clean_df[column], ax=axes[0])
+            # Box plot - explicit axis for seaborn compatibility
+            sns.boxplot(y=self.clean_df[column], ax=axes[0])
             axes[0].set_title('Box Plot')
             axes[0].set_xlabel(column)
             
             # Distribution plot with outlier thresholds
-            sns.histplot(data=self.clean_df[column], ax=axes[1], kde=True)
+            sns.histplot(x=self.clean_df[column], ax=axes[1], kde=True)
             axes[1].set_title('Distribution Plot')
             axes[1].set_xlabel(column)
             
@@ -887,7 +888,7 @@ class StatClean:
         
         return figures
         
-    def compare_methods(self, columns=None, methods=['iqr', 'zscore'], iqr_factor=1.5, zscore_threshold=3.0):
+    def compare_methods(self, columns=None, methods=None, iqr_factor=1.5, zscore_threshold=3.0):
         """
         Compare different outlier detection methods and their agreement.
         
@@ -921,6 +922,10 @@ class StatClean:
         if self.clean_df is None:
             raise ValueError("No DataFrame has been set. Use set_data() first.")
             
+        # Default methods if not provided
+        if methods is None:
+            methods = ['iqr', 'zscore']
+
         # Get outlier statistics
         stats_df = self.get_outlier_stats(columns, methods, iqr_factor, zscore_threshold)
         comparison = {}
@@ -1020,14 +1025,15 @@ class StatClean:
         if self.clean_df is None:
             raise ValueError("No DataFrame has been set. Use set_data() first.")
             
-        data = self.clean_df[column]
+        data = self.clean_df[column].dropna()
         
         # Calculate basic statistics
         skewness = data.skew()
         kurtosis = data.kurtosis()
         
-        # Perform Shapiro-Wilk test for normality
-        _, p_value = stats.shapiro(data.sample(min(len(data), 5000)))  # Sample to handle large datasets
+        # Perform Shapiro-Wilk test for normality (handle large datasets)
+        sample = data.sample(min(len(data), 5000)) if len(data) > 0 else data
+        _, p_value = stats.shapiro(sample)
         
         # Calculate robust statistics
         median = data.median()
@@ -1397,7 +1403,8 @@ class StatClean:
     
     # Multivariate outlier detection
     def detect_outliers_mahalanobis(self, columns: Optional[List[str]] = None, 
-                                   chi2_threshold: Optional[float] = None) -> pd.Series:
+                                   chi2_threshold: Optional[float] = None,
+                                   use_shrinkage: bool = False) -> pd.Series:
         """
         Detect multivariate outliers using Mahalanobis distance.
         
@@ -1444,19 +1451,49 @@ class StatClean:
         if n_samples <= n_features:
             raise ValueError(f"Need more observations ({n_samples}) than features ({n_features}) for Mahalanobis distance")
         
-        # Calculate mean and covariance matrix
+        # Calculate mean and covariance matrix (optionally using shrinkage estimator)
         try:
             mean = data.mean()
-            cov_matrix = data.cov()
-            
-            # Check if covariance matrix is invertible
-            if np.linalg.det(cov_matrix) == 0:
-                raise ValueError("Covariance matrix is singular and cannot be inverted")
-            
-            inv_cov_matrix = np.linalg.inv(cov_matrix)
-            
-        except np.linalg.LinAlgError:
-            raise ValueError("Could not compute inverse of covariance matrix. Data may be collinear.")
+            if use_shrinkage:
+                try:
+                    # Lazy import to avoid hard dependency
+                    from sklearn.covariance import LedoitWolf  # type: ignore
+                    lw = LedoitWolf().fit(data.values)
+                    inv_cov_matrix = lw.precision_
+                    cov_values = lw.covariance_
+                except Exception as e:
+                    warnings.warn(f"Shrinkage covariance (Ledoit-Wolf) unavailable ({e}); falling back to sample covariance.")
+                    cov_values = data.cov().values
+                    try:
+                        inv_cov_matrix = np.linalg.inv(cov_values)
+                    except np.linalg.LinAlgError:
+                        warnings.warn("Covariance inversion failed; using pseudoinverse (pinv).")
+                        inv_cov_matrix = np.linalg.pinv(cov_values)
+            else:
+                cov_values = data.cov().values
+                # Compute inverse or pseudoinverse with conditioning checks
+                try:
+                    det = np.linalg.det(cov_values)
+                except Exception:
+                    det = None
+                if det is not None and det == 0:
+                    warnings.warn("Covariance matrix is singular; using pseudoinverse (pinv) for Mahalanobis distance.")
+                    inv_cov_matrix = np.linalg.pinv(cov_values)
+                else:
+                    try:
+                        inv_cov_matrix = np.linalg.inv(cov_values)
+                    except np.linalg.LinAlgError:
+                        warnings.warn("Covariance inversion failed; using pseudoinverse (pinv).")
+                        inv_cov_matrix = np.linalg.pinv(cov_values)
+            # Warn on ill-conditioning
+            try:
+                cond = np.linalg.cond(cov_values)
+                if cond > 1e12:
+                    warnings.warn(f"Covariance matrix is ill-conditioned (cond={cond:.2e}); results may be unstable.")
+            except Exception:
+                pass
+        except Exception as e:
+            raise ValueError(f"Could not compute covariance inverse: {e}")
         
         # Calculate Mahalanobis distances
         def mahalanobis_distance(row):
@@ -1471,6 +1508,9 @@ class StatClean:
         # Set threshold
         if chi2_threshold is None:
             chi2_threshold = chi2.ppf(0.975, df=n_features)  # 97.5th percentile
+        elif 0 < chi2_threshold <= 1:
+            # Interpret as percentile and convert to chi-square statistic
+            chi2_threshold = chi2.ppf(chi2_threshold, df=n_features)
         
         # Create boolean mask for all rows in the original dataframe
         outlier_mask = pd.Series(False, index=self.clean_df.index)
@@ -1479,7 +1519,8 @@ class StatClean:
         return outlier_mask
     
     def remove_outliers_mahalanobis(self, columns: Optional[List[str]] = None, 
-                                   chi2_threshold: Optional[float] = None) -> 'StatClean':
+                                   chi2_threshold: Optional[float] = None,
+                                   use_shrinkage: bool = False) -> 'StatClean':
         """
         Remove multivariate outliers using Mahalanobis distance.
         
@@ -1499,7 +1540,7 @@ class StatClean:
             columns = self.clean_df.select_dtypes(include=np.number).columns.tolist()
         
         # Get outlier mask
-        outlier_mask = self.detect_outliers_mahalanobis(columns, chi2_threshold)
+        outlier_mask = self.detect_outliers_mahalanobis(columns, chi2_threshold, use_shrinkage=use_shrinkage)
         outliers = self.clean_df[outlier_mask]
         
         # Remove outliers
@@ -1559,20 +1600,25 @@ class StatClean:
             min_val = original_data.min()
             shift = abs(min_val) + 1
             data_to_transform = original_data + shift
-            print(f"Warning: Column '{column}' contains non-positive values. Shifting by {shift}")
+            warnings.warn(f"Column '{column}' contains non-positive values. Shifting by {shift}")
         else:
             data_to_transform = original_data
             shift = 0
         
         try:
+            non_na_mask = data_to_transform.notna()
             if lambda_param is None:
-                # Find optimal lambda
-                transformed_data, optimal_lambda = boxcox(data_to_transform.dropna())
-                # Apply to full data
-                self.clean_df[column] = boxcox(data_to_transform, lmbda=optimal_lambda)
+                # Find optimal lambda using non-NA values
+                _, optimal_lambda = boxcox(data_to_transform[non_na_mask])
+                # Apply to non-NA values only
+                transformed_full = data_to_transform.copy()
+                transformed_full[non_na_mask] = boxcox(data_to_transform[non_na_mask], lmbda=optimal_lambda)
+                self.clean_df[column] = transformed_full
             else:
                 # Use specified lambda
-                self.clean_df[column] = boxcox(data_to_transform, lmbda=lambda_param)
+                transformed_full = data_to_transform.copy()
+                transformed_full[non_na_mask] = boxcox(data_to_transform[non_na_mask], lmbda=lambda_param)
+                self.clean_df[column] = transformed_full
                 optimal_lambda = lambda_param
                 
         except Exception as e:
@@ -1619,7 +1665,7 @@ class StatClean:
             min_val = original_data.min()
             shift = abs(min_val) + 1
             data_to_transform = original_data + shift
-            print(f"Warning: Column '{column}' contains non-positive values. Shifting by {shift}")
+            warnings.warn(f"Column '{column}' contains non-positive values. Shifting by {shift}")
         else:
             data_to_transform = original_data
             shift = 0
@@ -1676,7 +1722,7 @@ class StatClean:
             min_val = original_data.min()
             shift = abs(min_val)
             data_to_transform = original_data + shift
-            print(f"Warning: Column '{column}' contains negative values. Shifting by {shift}")
+            warnings.warn(f"Column '{column}' contains negative values. Shifting by {shift}")
         else:
             data_to_transform = original_data
             shift = 0
@@ -1744,7 +1790,7 @@ class StatClean:
                 recommendations.append(sqrt_info)
                 
         except Exception as e:
-            print(f"Warning: Could not test all transformations: {str(e)}")
+            warnings.warn(f"Could not test all transformations: {str(e)}")
         
         # Find best transformation
         if recommendations:
@@ -1927,17 +1973,29 @@ class StatClean:
                        label=f"Lower bound: {outlier_info['lower_bound']:.2f}")
             plt.axvline(outlier_info['upper_bound'], color='r', linestyle='--',
                        label=f"Upper bound: {outlier_info['upper_bound']:.2f}")
-        else:  # Z-score
-            # Calculate bounds for z-score method for visualization
-            mean = outlier_info['mean']
-            std = outlier_info['std']
-            threshold = outlier_info['threshold']
-            lower_bound = mean - threshold * std
-            upper_bound = mean + threshold * std
+        else:
+            # Calculate bounds for z-score or modified z-score visualization
+            method = outlier_info['method']
+            if method == 'Z-score':
+                mean = outlier_info['mean']
+                std = outlier_info['std']
+                threshold = outlier_info['threshold']
+                lower_bound = mean - threshold * std
+                upper_bound = mean + threshold * std
+                label_suffix = 'Z'
+            else:  # Modified Z-score visualization: approximate bounds using median and MAD
+                median = outlier_info['median']
+                mad = outlier_info['mad']
+                threshold = outlier_info['threshold']
+                # Approximate bounds based on modified z-score definition
+                lower_bound = median - (threshold * mad / 0.6745)
+                upper_bound = median + (threshold * mad / 0.6745)
+                label_suffix = 'Modified Z'
+
             plt.axvline(lower_bound, color='r', linestyle='--',
-                       label=f"Lower bound: {lower_bound:.2f}")
+                        label=f"Lower bound ({label_suffix}): {lower_bound:.2f}")
             plt.axvline(upper_bound, color='r', linestyle='--',
-                       label=f"Upper bound: {upper_bound:.2f}")
+                        label=f"Upper bound ({label_suffix}): {upper_bound:.2f}")
         
         plt.title(f'Distribution of {column} with Outlier Bounds')
         plt.legend()

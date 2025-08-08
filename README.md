@@ -55,6 +55,11 @@ df = pd.DataFrame({
     'age': [25, 30, 35, 40, 35, 45, 50]
 })
 
+"""
+Note: As of v0.1.3, remover methods return the cleaner instance for method chaining.
+Access cleaned data via `cleaner.clean_df` and details via `cleaner.outlier_info`.
+"""
+
 # Initialize StatClean
 cleaner = StatClean(df)
 
@@ -73,13 +78,13 @@ print(f"Outliers removed: {info['income']['outliers_removed']}")
 ```python
 # Grubbs' test for outliers with statistical significance
 result = cleaner.grubbs_test('income', alpha=0.05)
-print(f"Test statistic: {result['test_statistic']:.3f}")
+print(f"Test statistic: {result['statistic']:.3f}")
 print(f"P-value: {result['p_value']:.6f}")
-print(f"Outlier detected: {result['outlier_detected']}")
+print(f"Outlier detected: {result['is_outlier']}")
 
 # Dixon's Q-test for small samples
 result = cleaner.dixon_q_test('age', alpha=0.05)
-print(f"Q statistic: {result['q_statistic']:.3f}")
+print(f"Q statistic: {result['statistic']:.3f}")
 print(f"Critical value: {result['critical_value']:.3f}")
 ```
 
@@ -87,7 +92,9 @@ print(f"Critical value: {result['critical_value']:.3f}")
 
 ```python
 # Mahalanobis distance for multivariate outliers
-outliers = cleaner.detect_outliers_mahalanobis(['income', 'age'], chi2_threshold=0.95)
+# chi2_threshold can be a percentile (0<val<=1) or absolute chi-square statistic
+# use_shrinkage=True uses Ledoit–Wolf shrinkage covariance if scikit-learn is installed
+outliers = cleaner.detect_outliers_mahalanobis(['income', 'age'], chi2_threshold=0.95, use_shrinkage=True)
 print(f"Multivariate outliers detected: {outliers.sum()}")
 
 # Remove multivariate outliers
@@ -99,12 +106,12 @@ cleaned_df = cleaner.remove_outliers_mahalanobis(['income', 'age'])
 ```python
 # Automatic transformation recommendation
 recommendation = cleaner.recommend_transformation('income')
-print(f"Recommended transformation: {recommendation['best_transformation']}")
-print(f"Improvement in skewness: {recommendation['skewness_improvement']:.3f}")
+print(f"Recommended transformation: {recommendation['recommended_method']}")
+print(f"Improvement in skewness: {recommendation['expected_improvement']:.3f}")
 
 # Apply Box-Cox transformation
-transformed_df = cleaner.transform_boxcox('income')
-print(f"Optimal lambda: {transformed_df['lambda']:.3f}")
+_, info = cleaner.transform_boxcox('income')
+print(f"Optimal lambda: {info['lambda']:.3f}")
 
 # Method chaining for complex workflows
 result = (cleaner
@@ -263,9 +270,18 @@ for feature in features:
 - **seaborn**: ≥0.11.0
 - **scipy**: ≥1.6.0 (for statistical tests)
 - **tqdm**: ≥4.60.0 (for progress bars)
-- **scikit-learn**: ≥0.24.0 (optional, for examples)
+- **scikit-learn**: ≥0.24.0 (optional, for shrinkage covariance in Mahalanobis)
 
 ## Changelog
+
+### Version 0.1.3 (2025-08-08)
+
+- Align docs/examples with actual API: remover methods return `self`; use `cleaner.clean_df` and `cleaner.outlier_info`.
+- Grubbs/Dixon result keys clarified: `statistic`, `is_outlier`.
+- Mahalanobis `chi2_threshold` accepts percentile (0<val<=1) or absolute chi-square statistic; added `use_shrinkage` option.
+- Transformations preserve NaNs; Box-Cox computed on non-NA values only.
+- Seaborn plotting calls updated for compatibility; analysis functions made NaN-safe.
+- Added GitHub Actions workflow to publish to PyPI on releases.
 
 ### Version 0.1.0 (2025-08-06)
 
@@ -320,3 +336,29 @@ MIT License
 ---
 
 *StatClean: Where statistical rigor meets practical data science.*
+
+## Development: Run Tests in Headless Mode and Capture Logs
+
+```bash
+# Ensure a headless matplotlib backend and run tests quietly
+export MPLBACKEND=Agg
+pytest -q
+
+# Save a timestamped test log (example)
+LOG=cursor_logs/test_log.md
+mkdir -p cursor_logs
+echo "==== $(date) ====\n" >> "$LOG"
+MPLBACKEND=Agg pytest -q 2>&1 | tee -a "$LOG"
+
+## Continuous Delivery: Publish to PyPI (Trusted Publisher)
+
+This repository includes a GitHub Actions workflow using PyPI Trusted Publisher (OIDC).
+
+Setup (one-time on PyPI):
+- Add this GitHub repo as a Trusted Publisher in the PyPI project settings.
+
+Release steps:
+1. Bump version in `statclean/__init__.py` and `setup.py` (already `0.1.3`).
+2. Push a tag matching the version, e.g., `git tag v0.1.3 && git push origin v0.1.3`.
+3. Workflow will run tests, build, and publish to PyPI without storing credentials.
+```

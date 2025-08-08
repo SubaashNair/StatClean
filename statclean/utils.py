@@ -116,8 +116,8 @@ def plot_boxplot(data: Union[pd.Series, np.ndarray],
     if isinstance(outliers, pd.Series):
         outliers = outliers.values if outliers is not None else None
     
-    # Create box plot
-    sns.boxplot(data=data, color='lightblue')
+    # Create box plot (explicit axis for seaborn compatibility)
+    sns.boxplot(y=data, color='lightblue')
     
     if outliers is not None:
         # Overlay outlier points in red
@@ -224,7 +224,7 @@ def plot_outlier_analysis(data: Union[pd.Series, np.ndarray],
     
     # 3. Box plot
     plt.subplot(2, 2, 3)
-    sns.boxplot(data=data, color='lightblue')
+    sns.boxplot(y=data, color='lightblue')
     plt.plot(np.zeros_like(data[outliers]), data[outliers], 
             'ro', label='Identified Outliers')
     plt.title('Box Plot')

@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="statclean",
-    version="0.1.2",
+    version="0.1.3",
     author="Subashanan Nair",
     author_email="subaashnair12@gmail.com",
     description="A comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting",
@@ -21,7 +21,7 @@ setup(
     },
     packages=find_packages(),
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
