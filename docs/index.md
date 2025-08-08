@@ -1,10 +1,16 @@
 # Welcome to StatClean
 
-A comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting.
+Data preprocessing & outlier detection with formal statistical methods and publication-quality reporting.
+
+[![PyPI](https://img.shields.io/pypi/v/statclean.svg)](https://pypi.org/project/statclean/)
+[![Build](https://github.com/SubaashNair/StatClean/actions/workflows/pages.yml/badge.svg)](https://github.com/SubaashNair/StatClean/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
+
+> Note: Remover methods return `self`. Access cleaned data via `cleaner.clean_df` and details via `cleaner.outlier_info`.
 
 ## Quick Start
 
-```python
+```bash
 pip install statclean
 ```
 
@@ -12,31 +18,42 @@ pip install statclean
 from statclean import StatClean
 import pandas as pd
 
-# Your data
 df = pd.DataFrame({'values': [1, 2, 3, 100, 4, 5]})
-
-# Initialize StatClean
 cleaner = StatClean(df)
-
-# Detect and remove outliers
 cleaner.remove_outliers_zscore('values')
-cleaned_data = cleaner.clean_df
+cleaned_df = cleaner.clean_df
 ```
 
-## Features
+## Feature Overview
 
-- **Formal Statistical Testing**: Grubbs' test, Dixon's Q-test with p-values
-- **Multivariate Analysis**: Mahalanobis distance outlier detection
-- **Data Transformations**: Box-Cox, logarithmic, square-root transformations
-- **Method Chaining**: Fluent API for streamlined workflows
-- **Publication-Quality Reporting**: Statistical significance testing
+| Feature | Univariate | Multivariate | Formal Test |
+|---|---:|---:|---:|
+| IQR | ✅ |  |  |
+| Z-score | ✅ |  |  |
+| Modified Z-score | ✅ |  |  |
+| Mahalanobis |  | ✅ |  |
+| Grubbs | ✅ |  | ✅ |
+| Dixon Q | ✅ |  | ✅ |
+
+## How It Flows
+
+```mermaid
+flowchart LR
+  A[DataFrame] --> B[Analyze Distribution]
+  B --> C{Recommend Method}
+  C --> D[IQR / Z / Modified Z]
+  C --> E[Mahalanobis]
+  D --> F[Remove / Winsorize]
+  E --> F
+  F --> G[Report & Plots]
+```
 
 ## Navigation
 
-- [API Reference](api-reference.md)
-- [Statistical Methods](statistical-methods.md)
-- [Examples](examples.md)
 - [Installation Guide](installation.md)
+- [Quick Start Examples](examples.md)
+- [Statistical Methods](statistical-methods.md)
+- [API Reference](api-reference.md)
 
 ## Links
 
