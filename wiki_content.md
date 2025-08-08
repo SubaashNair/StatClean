@@ -2,7 +2,6 @@
 
 ## Home Page (Home.md)
 
-# Welcome to StatClean Wiki
 
 StatClean is a comprehensive statistical data preprocessing and outlier detection library with formal statistical testing and publication-quality reporting.
 As of v0.1.3, remover methods return the cleaner instance for chaining; access results via `cleaner.clean_df` and `cleaner.outlier_info`.
