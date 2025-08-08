@@ -19,7 +19,7 @@
 <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <nav class="navbar navbar-expand-md navbar-light sticky-top dense-nav">
         <div class="container">
             <a class="navbar-brand" href="index.html">
                 <i class="fas fa-chart-line me-2"></i>StatClean
@@ -29,8 +29,8 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+            <div class="collapse navbar-collapse w-100" id="navbarNav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="index.html">Home</a>
                     </li>
@@ -47,8 +47,15 @@
                         <a class="nav-link" href="api-reference.html">API</a>
                     </li>
                 </ul>
-                
-                <div class="d-flex ms-auto">
+
+                <div class="d-flex ms-auto align-items-center search-container">
+                    <input id="docSearch" class="form-control form-control-sm" type="search" placeholder="Search docs…" aria-label="Search" />
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <div class="d-flex ms-2 align-items-center">
+                    <button class="btn btn-outline-secondary me-2" id="themeToggle" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
                     <a href="https://github.com/SubaashNair/StatClean" class="btn btn-outline-primary">
                         <i class="fab fa-github"></i>
                         <span>GitHub</span>
@@ -62,10 +69,10 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <!-- Sidebar Navigation -->
-            <div class="col-lg-3 sidebar">
+            <div class="col-lg-3 col-xl-2 sidebar">
                 <nav class="nav flex-column scrollspy-nav">
                     <a class="nav-link active" href="#method-selection">Method Selection</a>
                     <a class="nav-link" href="#univariate">Univariate Methods</a>
@@ -79,7 +86,7 @@
             </div>
             
             <!-- Main Content -->
-            <div class="col-lg-9 content-area">
+            <div class="col-lg-9 col-xl-10 content-area">
                 <h1><i class="fas fa-flask me-3"></i>Statistical Methods</h1>
                 <p class="lead">Comprehensive guide to the mathematical foundations and appropriate use cases for each statistical method in StatClean.</p>
                 
@@ -620,6 +627,7 @@ print(f"Reason: {analysis['recommendation_reason']}")</code></pre>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/search.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -683,6 +691,18 @@ print(f"Reason: {analysis['recommendation_reason']}")</code></pre>
                     });
                 }
             });
+        });
+
+        // Theme toggle
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const stored = localStorage.getItem('bs-theme') || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-bs-theme', stored);
+        document.getElementById('themeToggle')?.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', current);
+            localStorage.setItem('bs-theme', current);
+            const icon = document.querySelector('#themeToggle i');
+            if (icon) icon.className = current === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         });
     </script>
 </body>
