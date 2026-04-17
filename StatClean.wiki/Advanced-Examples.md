@@ -125,11 +125,11 @@ cleaned_df, info = cleaner.clean_columns(
     show_progress=True
 )
 
-# Time series specific visualization
-for feature in sensor_features:
-    print(f"\n{feature} Cleaning Results:")
-    print(f"  Method used: {info[feature]['method_used']}")
-    print(f"  Outliers removed: {info[feature]['outliers_removed']}")
+# `info` is a DataFrame with one row per cleaned column
+for _, row in info.iterrows():
+    print(f"\n{row['Column']} Cleaning Results:")
+    print(f"  Method used: {row['Method']}")
+    print(f"  Outliers removed: {row['Outliers Found']}")
 
 # Generate comprehensive plots for time series data
 figs = cleaner.plot_outlier_analysis(sensor_features)

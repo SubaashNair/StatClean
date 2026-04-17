@@ -394,14 +394,12 @@ print(f"\\nCleaning Results:")
 print(f"Original shape: {df.shape}")
 print(f"Cleaned shape: {cleaned_df.shape}")
 
-# Detailed results for each feature
-for feature, info in cleaning_info.items():
-    print(f"\\n{feature}:")
-    print(f"  Method used: {info['method_used']}")
-    print(f"  Outliers removed: {info['outliers_removed']}")
-    print(f"  Percentage removed: {info['percentage_removed']:.2f}%")
-    if 'p_value' in info:
-        print(f"  Statistical significance: p = {info['p_value']:.6f}")
+# `cleaning_info` is a DataFrame — one row per cleaned column
+for _, row in cleaning_info.iterrows():
+    print(f"\\n{row['Column']}:")
+    print(f"  Method used: {row['Method']}")
+    print(f"  Outliers removed: {row['Outliers Found']}")
+    print(f"  Percentage removed: {row['Percent Removed']:.2f}%")
 
 # Generate comprehensive visualizations for cleaned data
 figures = cleaner.plot_outlier_analysis(features)

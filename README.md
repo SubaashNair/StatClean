@@ -68,7 +68,8 @@ cleaned_df, info = cleaner.clean_columns(['income'], method='auto', show_progres
 
 print(f"Original shape: {df.shape}")
 print(f"Cleaned shape: {cleaned_df.shape}")
-print(f"Outliers removed: {info['income']['outliers_removed']}")
+# `info` is a DataFrame summarising each cleaned column
+print(info[info['Column'] == 'income'][['Method', 'Outliers Found', 'Percent Removed']])
 ```
 
 ## Advanced Usage
@@ -97,8 +98,8 @@ print(f"Critical value: {result['critical_value']:.3f}")
 outliers = cleaner.detect_outliers_mahalanobis(['income', 'age'], chi2_threshold=0.95, use_shrinkage=True)
 print(f"Multivariate outliers detected: {outliers.sum()}")
 
-# Remove multivariate outliers
-cleaned_df = cleaner.remove_outliers_mahalanobis(['income', 'age'])
+# Remove multivariate outliers (method chaining; access data via `clean_df`)
+cleaned_df = cleaner.remove_outliers_mahalanobis(['income', 'age']).clean_df
 ```
 
 ### Data Transformations
@@ -135,8 +136,11 @@ print(f"Recommended method: {analysis['recommended_method']}")
 comparison = cleaner.compare_methods(['income'], 
                                    methods=['iqr', 'zscore', 'modified_zscore'])
 print("Method Agreement Analysis:")
-for method, stats in comparison['income']['method_stats'].items():
-    print(f"  {method}: {stats['outliers_detected']} outliers")
+income_cmp = comparison['income']
+print(f"  Agreement: {income_cmp['agreement_percentage']:.1f}%")
+print(f"  Common outliers: {len(income_cmp['common_outliers'])}")
+for method, indices in income_cmp['method_specific_outliers'].items():
+    print(f"  {method} only: {len(indices)} outliers")
 ```
 
 ### Advanced Visualization
@@ -167,14 +171,15 @@ cleaned_df, detailed_info = cleaner.clean_columns(
     include_indices=True
 )
 
-# Access detailed statistics
-for column, info in detailed_info.items():
-    print(f"\n{column}:")
-    print(f"  Method used: {info['method_used']}")
-    print(f"  Outliers removed: {info['outliers_removed']}")
-    print(f"  Percentage removed: {info['percentage_removed']:.2f}%")
-    if 'p_value' in info:
-        print(f"  Statistical significance: p = {info['p_value']:.6f}")
+# `detailed_info` is a DataFrame — one row per cleaned column
+print(detailed_info)
+
+# Per-column inspection
+for _, row in detailed_info.iterrows():
+    print(f"\n{row['Column']}:")
+    print(f"  Method used: {row['Method']}")
+    print(f"  Outliers removed: {row['Outliers Found']}")
+    print(f"  Percentage removed: {row['Percent Removed']:.2f}%")
 ```
 
 ## Statistical Methods Reference
@@ -245,11 +250,12 @@ print(f"\nCleaning Results:")
 print(f"Original shape: {df.shape}")
 print(f"Cleaned shape: {cleaned_df.shape}")
 
-for feature, info in cleaning_info.items():
-    print(f"\n{feature}:")
-    print(f"  Method: {info['method_used']}")
-    print(f"  Outliers removed: {info['outliers_removed']}")
-    print(f"  Percentage: {info['percentage_removed']:.2f}%")
+# `cleaning_info` is a DataFrame summarising each cleaned column
+for _, row in cleaning_info.iterrows():
+    print(f"\n{row['Column']}:")
+    print(f"  Method: {row['Method']}")
+    print(f"  Outliers removed: {row['Outliers Found']}")
+    print(f"  Percentage: {row['Percent Removed']:.2f}%")
 
 # Generate comprehensive visualizations
 figures = cleaner.plot_outlier_analysis(features)
@@ -263,14 +269,14 @@ for feature in features:
 
 ## Requirements
 
-- **Python**: ≥3.7
+- **Python**: ≥3.9
 - **numpy**: ≥1.19.0
 - **pandas**: ≥1.2.0  
 - **matplotlib**: ≥3.3.0
 - **seaborn**: ≥0.11.0
 - **scipy**: ≥1.6.0 (for statistical tests)
 - **tqdm**: ≥4.60.0 (for progress bars)
-- **scikit-learn**: ≥0.24.0 (optional, for shrinkage covariance in Mahalanobis)
+- **scikit-learn**: ≥0.24.0 (optional, for shrinkage covariance in Mahalanobis — install via `pip install statclean[shrinkage]`)
 
 ## Changelog
 

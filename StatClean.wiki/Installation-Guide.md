@@ -8,13 +8,14 @@ pip install statclean
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.9+
 - numpy >= 1.19.0
 - pandas >= 1.2.0
 - matplotlib >= 3.3.0
 - seaborn >= 0.11.0
 - scipy >= 1.6.0
 - tqdm >= 4.60.0
+- scikit-learn >= 0.24.0 (optional; `pip install statclean[shrinkage]`)
 
 ## Development Install
 
